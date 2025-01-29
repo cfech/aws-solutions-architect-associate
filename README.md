@@ -1,33 +1,96 @@
 # AWS Certified Solutions Architect Associate SAA-C03 Course Code
 *By [Digital Cloud Training](https://digitalcloud.training/) - Course Author Neal Davis*
 
-## How to Use the Course Code
+## IAM ###
+- Users: IAM users are individuals or applications that you create in AWS to grant them access to your AWS resources.
+    - long term
+- Groups: IAM groups are collections of IAM users that you can use to simplify permissions management by assigning permissions to the group instead of individual users.
+- Roles: IAM roles are sets of permissions that you can assign to AWS resources (like EC2 instances) or federated users, allowing them to assume specific permissions without having long-term credentials.
+    - short term
+- Policies: IAM policies are documents that define permissions for users, groups, or roles, specifying which actions they can perform on which resources.
+    - Policies are the rules.   
+    - Users, groups, and roles are who the rules apply to.
+```
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": "*",
+            "Resource": "*"
+        }
+    ]
+}
+```
 
-The code used throughout the course has been zipped up and is available for download from this repo. Please download the code to your computer and unzip the contents. When course updates are made the file may be updated and you will need to ensure you download the latest version.
+### Best Practices ###
+- Do not use the root user
+- Create an admin user, then create a regular user to take actions with 
+  - this follows principle of least privilege and only use the account with the least amount of privilege required
+- Create groups to put users into for easy reassignment of permissions 
+- see: https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html
 
-## Course Overview
 
-The AWS Certified Solutions Architect Associate certification is the most popular AWS certification and the most in-demand for cloud jobs. AWS Solutions Architects can earn over $150,000 p/a and your chances of getting a job will increase dramatically by getting AWS certified.
+### Auth Methods ###
+- MFA - 2 of the following
+    - something you know - ie: passwords
+    - something you have - ie: token/authenticator
+        - security key
+        - mobile auth app
+        - time based on time passwords (TOTP)
+    - something you are- ie: biometrics 
+- Access Keys - programmatic 
+    - used for CLI or other API endpoints
+    - Access Key ID and Secret Key
 
-In this course, you’ll learn everything you need to know to pass your AWS Certified Solutions Architect Associate exam. The course is taught in a style that includes theory lessons with lots of visualization such as architectural diagrams and animated graphics (this is not death by bullet point).
+### Permission Boundaries ###  
+- Sets maximum permissions an entity can have
+- Assigned to users and roles
+- Even if you have a policy, the boundary will restrict the max permissions the user can have
+- Helps to mitigate privilege escalation
+  - ie: something who only has IAM flags could create a user and given them admin access
+    - can give someone IAM Full access but add a permission boundary that says the users this user creates can only have same or lower permissions as the current user
 
-After the theory lessons you’ll get to put your knowledge into practical use with hands-on lessons that teach you how to use AWS and complete exercises that reflect real-world situations. Learning by doing is the best way to ensure you build practical skills and increases knowledge retention.
+### Evaluation Logic ###
+ ![text](./images/iam/permission-logic.png)
+1. explicitly deny
+2. organization policy
+3. resource policy
+4. identity policy
+5. IAm permission boundary
+6. Session policy
 
-The course includes the following features to ensure you are well prepared for the exam:
-- Coverage of the latest exam topics for the SAA-C03
-- Hands-on lessons using the new AWS Management Console
-- Separate theory lessons with amazing architectural diagrams
-- Exam cram lessons summarizing key knowledge
-- Architecture patterns lessons where you’ll learn how to respond to solutions architecture requirements
-- Quiz questions
-- Downloadable slides and study plan
+![text](./images/iam/authorizing-in-aws.png)
+![text](./images/iam/types-of-policy.png)
 
-What you will learn: 
+- Requests are implicitly denied by default 
+    - Root user has full access
+- Explicit deny overrides any allows 
 
-- You will learn – how to design and build multi-tier web architectures with services such as Amazon EC2 Auto Scaling, Amazon Elastic Load Balancing (ELB), AWS Route 53, AWS Lambda, Amazon API Gateway and Amazon Elastic File System (EFS)
-- You will learn – how to create Docker container clusters on Amazon Elastic Container Services (ECS), set up serverless event-driven AWS Lambda Functions with Amazon API Gateway and Amazon Kinesis integrations, and geographically redundant database services with Amazon Relational Database Service (RDS)
-- You will learn – how to configure Amazon Virtual Private Clouds (VPC), subnets, and route tables and setup best practice Security Group configurations
-- You will learn – how to build repeatably and securely with AWS CloudFormation, set up a PaaS with AWS Elastic Beanstalk, configure Amazon S3 bucket policies and share data between multiple AWS accounts
-- You will learn – how to use application integration services including AWS Step Functions, Amazon MQ, SNS, SWF and SQS
 
-Learn more and [enroll in this course](https://digitalcloud.training/aws-certified-solutions-architect-associate/) now to get your AWS Certified Solutions Architect Associate certification in 50 days or less
+### IAM Policy Structure ###
+- Everything in AWS is an api call
+- Each service has a set of actions
+    - example `"Action": "s3:GetObject"`
+- IAM Policies are are written in JSON
+```
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+                "s3-object-lambda:WriteGetObjectResponse"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+```
+- The only effects are `allow` or `deny`
+- Action - list specific operations this policy affects
+- Resource - which resource these actions can be performed on
+- `*` - wildcard - signifies all from this point
