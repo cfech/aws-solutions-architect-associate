@@ -1,5 +1,58 @@
 # Introduction to Building with AWS Databases
 
+## Well Architected Framework ##
+- helps you understand the pros and cons of decisions you make while building systems on Amazon Web Services (AWS). Using the AWS Well-Architected Framework helps you learn architectural best practices for designing and operating secure, reliable, efficient, cost-effective, and sustainable workloads in the AWS Cloud
+
+### General Principles
+1. Stop guessing capacity needs
+    - If you make a poor capacity decision when deploying a workload, you might end up sitting on expensive idle resources or dealing with the performance implications of limited capacity. With cloud computing, these problems can go away. You can use as much or as little capacity as you need and scale up and down (or in and out) automatically. You can monitor your workloads and capacities and make those changes within minutes after receiving alarms or notifications when certain processes reach thresholds.
+2. Test systems at production scale
+    - In the cloud, it is much more cost effective to simulate your production environment than doing this on premises. Always run full tests at production scale and then decommission those resources after the test. Remember, in most cases, you are only paying for the time in which things are running.
+3. Automate to make architectural experimentation easier
+    - Computers are faster, dispassionate, and more consistent than humans. For this reason, you should automate whenever possible. With automation, you can create and replicate your workloads at low cost and avoid the expense of manual effort. You can track changes to your automation, audit the impact, and revert to previous parameters when necessary. The cloud makes decisions less stressful, because they are rarely decisions that can't be undone.
+4. Allow for evolutionary architecture
+    - Architectural decisions were often implemented as static, one-time events, with a few major versions of a system during its lifetime. As a business and its context continue to evolve, these initial decisions might hinder the system's ability to deliver changing business requirements. In the cloud, the capability to automate and test on demand lowers the risk of impact from design changes. This lets systems evolve over time so that businesses can take advantage of innovations as a standard practice.
+5. Dive architecture using data 
+    - In the cloud, you can collect data on how your architectural choices affect the behavior of your workload. This facilitates making fact-based decisions on how to improve your workload. Your cloud infrastructure is code, so you can use that data to inform your architecture choices and improvements over time. Depending on what your data is telling you, you can make adjustments within your code. Unlike with traditional on-premises workloads, you don't have to make these assumptions without data to support it.
+6. improve through game days 
+    - Test how your architecture and processes perform by regularly scheduling game days to simulate events in production. This will help you understand where improvements can be made and can help develop organizational experience in dealing with events.
+
+
+### Six Pillars
+![text](./images/dbs/framework-pillars.png)
+1. Operational Excellence
+    - Includes how your organization supports your business objectives, your ability to run workloads effectively, gain insight into their operations, and continuously improve supporting processes and procedures to deliver business value.
+2. Reliability
+    - focuses on workloads performing their intended functions and how to recover quickly from failure to meet demands. Key topics include distributed system design, recovery planning, and adapting to changing requirements.
+3. Performance Efficiency 
+    - focuses on structured and streamlined allocation of IT and computing resources. Key topics include selecting resource types and sizes optimized for workload requirements, monitoring performance, and maintaining efficiency as business needs evolve.
+4. Cost Optimization
+    - focuses on avoiding unnecessary costs. Key topics include understanding spending over time and controlling fund allocation, selecting resources of the right type and quantity, and scaling to meet business needs without overspending.
+5. Sustainability
+    - focuses on minimizing the environmental impacts of running cloud workloads. Key topics include a shared responsibility model for sustainability, understanding impact, and maximizing utilization to minimize required resources and reduce downstream impacts.
+6. Security 
+    - focuses on protecting information and systems. Key topics include confidentiality and integrity of data, managing user permissions, and establishing controls to detect security events.
+
+
+
+
+## Serverless vs Server Based
+- Server
+    - constant or predictive compute where scaling is not a top priority
+    - easier debugging and more developer visibility
+    - fewer components
+    - more control, manage infrastructure
+        - may be required for compliance and security standards
+    - offer better support for legacy applications
+- Serverless
+    - no server management, less control
+    - very scalable with minimal interaction
+    - can migrate entire applications or just pieces to run on serverless 
+    - smaller deployable units can deliver faster features to market
+    - cost goes down for backend infrastructure
+    - build at low cost and ease into the market with varying traffic
+
+
 ## SQL DB
 
 ### RDS
@@ -375,6 +428,7 @@ SELECT customerid,
 ## Supporting services
 - Amazon API Gateway: service through which developers can create, publish, maintain, monitor and secure APIs at any scale
 - Amazon Athena: interactive query service that allows analyzing data in S3
+- Amazon Cognito: service that helps developers add user authentication, authorization, and management to their web and mobile apps
 - Amazon Comprehend: NLP service that uses machine learning to find insights and relationships in text
 - Amazon Cloudwatch: a monitoring and management service that provides you the data and actionable insights to monitor and understand what is going on in your applications
 - Amazon Elastic Container Registry (ECR): fully managed container registry offering high-performance hosting, so you can reliably deploy application images and artifacts anywhere
