@@ -510,6 +510,121 @@
 
 
 ## Aws Organizations ##
+![text](./images/org/organization-overview.png)
+
 - https://digitalcloud.training/aws-organizations/
 - create one organization for many accounts
-- allow for service control policies (scp)
+- allow for `service control policies (scp)`
+- can consolidate multiple accounts into an organizations that allows for centrally management
+- Two Feature Sets:
+    - `Consolidate Bill` - only 1 main account gets the bill, 1 card
+        - Aggregates usage of services across all accounts which can come with some discounts
+        - Includes paying account 
+            - independent and cannot access resources from other accounts
+            - Credit card is linked to
+        - `Linked Accounts`
+            - all linked accounts are independent and can use services 
+    - `All Features` - gives some additional capabilities including `SCP`
+- `Management accounts`, create organizations and add accounts (aka `Master/Management Accounts`)
+    - this does not have to be the overall root aws account
+    - can group users into organizations units
+    - can create account programmatically
+    - can use `AWS SSO`
+    - Allow for use of `service control policies` to limit permissions per account 
+    - The `root` is the top-most container in an `AWS organization's` hierarchy, while the management account is the account that creates the `organization`
+- Policies are applied to root accounts or `OUs`
+
+- There are many services and policies that are disabled by default when creating an `organization`
+    - must explicitly enable them
+
+
+
+### Organization Accounts 
+
+![text](./images/org/organization-overview.png)
+
+| Feature | Management Account | Member Account |
+|---|---|---|
+| **Authority** | Highest level of control | Operates within defined boundaries |
+| **Creation** | Creates the organization | Created by the management account or invited to join |
+| **Policies** | Defines and applies policies | Inherits and implements policies |
+| **Billing** | Manages consolidated billing | Contributes to consolidated billing |
+| **Access Control** | Sets organization-wide access controls | Manages individual account access |
+
+
+### Service Control Policies
+![text](./images/org/scp.png)
+- SCP control maximum available permissions, they are explicit deny
+    - **the do not grant permissions , just limit them**
+- SCP can be applied at the OU level 
+    - in the example the dev ou can only launch t2.micro
+    - the policies flow down stream through the organizational hierarchy
+    - **these constraints apply to everyone including admins**
+- OUs can be created and have users added to them
+- Example SCP
+```
+{    
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DenyAccessToASpecificRole",
+      "Effect": "Deny",
+      "Action": [
+        "iam:AttachRolePolicy",
+        "iam:DeleteRole",
+        "iam:DeleteRolePermissionsBoundary",
+        "iam:DeleteRolePolicy",
+        "iam:DetachRolePolicy",
+        "iam:PutRolePermissionsBoundary",
+        "iam:PutRolePolicy",
+        "iam:UpdateAssumeRolePolicy",
+        "iam:UpdateRole",
+        "iam:UpdateRoleDescription"
+      ],
+      "Resource": [
+        "arn:aws:iam::*:{role/name-of-role-to-deny}"
+      ]
+    }
+  ]
+}
+```
+- `Tag Policy` - Tag policies allow you to standardize the tags attached to the AWS resources in an organization's accounts.
+    - You can use tag policies to maintain consistent tags, including the preferred case treatment of tag keys and tag values.
+
+
+
+
+### AWS Control Tower
+![text](./images/org/control-tower.png)
+- **extends capabilities of organizations** 
+- released after organizations
+- sits over the top to add some guardrails
+- creates a `landing zone`
+    - a well architected multi-account baseline
+    - has a whole bunch of preventive guardrails that disallow api actions using SCP
+- Integrates with SSO
+
+- Shared accounts with control tower
+    - Management Account
+    - Log archive account 
+        - stores copy of all `aws cloudtrail` and `aws config` log files
+    - Audit account
+        - aggregates and stores logs collected from other accounts in the landing zone
+        - secure account with restricted access
+- Preventative Guardrails
+    - designed to prevent policy violations before they occur
+    - ie: `SCP`
+    - example: disallow deletion og `Cloudtrail Logs` and `S3 Logging Buckets`
+- Detective Guardrails
+    - monitor and report policy violations for non-compliant actives that have already occurred
+    -  help identify mis conduct 
+    - Use `AWS Config` rules and Lambda Functions 
+    - Continuos Evaluation
+    - Example: detect publicly accessible `S3 Bucket`
+
+![text](./images/org/organization-vs-control-tower.png)
+
+
+
+## AWS Virtual Private Cloud (VPC) ##
+- 
