@@ -1,6 +1,17 @@
 # AWS Certified Solutions Architect Associate SAA-C03 Course Code
 *By [Digital Cloud Training](https://digitalcloud.training/) - Course Author Neal Davis*
 
+
+**Sections**
+
+2. [Identity and Access Management (IAM)](#iam)
+3. [Elastic Compute Cloud (EC2)](#ec2)
+4. [Elastic Load Balancing and Auto Scaling](#elastic-load-balancing-and-auto-scaling)
+5. [AWS organizations](#aws-organizations)
+6. [AWS Virtual Private Cloud (VPC)](#aws-virtual-private-cloud-vpc)
+7. [Amazon Simple Storage Service (S3)](#amazon-simple-storage-service-s3)
+
+
 ## IAM ###
 - https://digitalcloud.training/aws-iam/
 - Users: `IAM` users are individuals or applications that you create in AWS to grant them access to your AWS resources.
