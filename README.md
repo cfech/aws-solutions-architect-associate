@@ -627,4 +627,276 @@
 
 
 ## AWS Virtual Private Cloud (VPC) ##
-- 
+- Can create 5 VPC's per `Region`
+- Each `Region` has a default `VPC`
+- Avoid overlapping CIDR Blocks
+- https://digitalcloud.training/amazon-vpc/
+- https://digitalcloud.training/aws-direct-connect/
+
+### AWS Global Infrastructure ###
+![text](./images/vpc/regions.png)
+- `Regions` hold `Availability Zones (AZ)`
+    - distant from each other
+- `AZ` are 1 or more physical data centers 
+    - have redundant power sources and networking
+    - fairly close to each other
+- Common to have resources in the same `Region` and Multiple `AZ` as well as in different `Regions` for high availability
+- `Regions` are connected by `AWS Local Network`
+- `Subnets` are crated within `AZ` 
+    - Public Subnets:
+        - Must have a route to and `Internet Gateway`
+        - Must have `Auto-assign public IPv4 address` set ot `yes` 
+- `Direct Connect` 
+- `Outposts` - piece of hardware that comes into your data center
+    - supports subset of AWS
+    - Has connectivity back to AWs region
+- `AWS Local Zone` - like AZ in metro politian areas
+    - can provide closer connectivity areas
+- `Wavelength zones` - for 5G, goal is to lower the delay and latency to your data center
+
+![text](./images/vpc/az.png)
+
+- `Amazon Cloudfront` - aws CDN
+    - Have `Regional Edge Cache` 
+    - Allows for users around the world to access resources at lower latency
+- AWS Allows us to simply deploy services globally from the management console. cli or api
+
+### IP Addressing ###
+
+![text](./images/vpc/ip1.png)
+![text](./images/vpc/ip2.png)
+
+
+### Amazon VPC Overview ###
+![text](./images/vpc/vpc-diagram.png)
+- `Regions` have `VPC`
+- `VPC` cannot span `Regions`
+- Logically isolated portion of the AWS cloud withing a `Region`
+- `AZ's` can be used withing the `VPC`
+- `Subnets` are created and aligned to `AZ`
+    - cannot assign the same `Subnet` to multiple `AZ`
+    - Can have multiple `Subnet` in the same `AZ`
+- `VPC Router` - handles routing within and out of the `VPC`
+    - You don't handle this, but can configure the `VPC` Rout table
+- `Internet Gateway` attaches to `VPC` and used for egress/ingress to the internet
+    - only 1 per `VPC`
+    - There is an `Egress Only Internet Gateway` that uses IPV6 and only allows egress
+- Can create multiple (Up to 5 by default) `VPCs` in a `Region`
+    - each `VPC` has its own CIDR block
+    - can create the network ID's for the `Subnets`, but they have to be within the CIDR block
+
+![text](./images/vpc/vpc-components.png)
+- `Peering connection` - connects multiple `VPCs`
+- `VPC Endpoint` - private IP can connect to AWs
+- `Virtual Private Gateway` and Customer Gateway - deal with creating VPN connections
+- `AWS Direct Connect` - allow high speed, private network connection to AWS
+    - Avoids public internet
+
+
+![text](./images/vpc/vpc-core-knowledge.png)
+- **VPC is like having your own Data Center in AWS**
+    - needs a CIDR blocks
+    - Spans all `AZ` in a `Region`
+    - Provides complete control over virtual networking 
+    - Can create 5 per `Region`
+    - Full Access over AWS resources 
+    - Default VPC os created in each `Region` with a public `Subnet` by default 
+
+### Defining VPC CIDR Blocks ###
+![text](./images/vpc/cidr-rules.png)
+- Size should be between /16 and /28
+- Cannot overlap an existing `VPC`
+- cannot increase eor decrease and existing size
+- **first for and lastIP address are not available for use**
+    - this is done at the subnet level
+- recommend you use private ip ranges
+- `VPC Subnets` have a longer subnet mask than the `CIDR` block they come from
+
+| IP Address | Purpose | Example (CIDR block 10.0.0.0/24) |
+|---|---|---|
+| Network address | Identifies the subnet itself | 10.0.0.0 |
+| VPC router address |  Used by the VPC router for routing traffic | 10.0.0.1 |
+| DNS server address | Used for DNS resolution within the VPC | 10.0.0.2 |
+| Future use address | Reserved for future use by AWS | 10.0.0.3 |
+| Network broadcast address | Used for broadcast communication within the subnet | 10.0.0.255 |
+
+
+![text](./images/vpc/cidr-considerations.png)
+- Bigger blocks give more flexibility
+- Smaller `subnets` are OK for most use cases
+- Consider deploying applications tiers per `subnet`
+- `VPC` peering requires non-overlapping cider blocks
+- **Avoid overlapping CIDR blocks**
+- Example subnet calculator: https://www.site24x7.com/tools/ipv4-subnetcalculator.html
+
+### Custom VPC ###
+![text](./images/vpc/custom-vpc.png)
+- important thing to know here is the difference in the rout tables
+- private `subnet` has no connection to the `igw`
+
+
+### Security Groups and Network ACL ###
+![text](./images/vpc/sg-vs-nacl.png)
+
+
+- Stateless firewall - must have explicit rules to allow data flow in each direction
+- Stateful firewall - allows return traffic automatically if incoming traffic was allowed 
+
+- `Security Group` 
+    - instance level 
+    - can be applied to instances in any `subnet`
+    - stateful firewall - will allow outbound traffic if inbound is allowed
+        - this is because of the `outbound rules`
+    - only support allow rules (ie: whitelist)
+    - `Security Group Chaining` - set inbound or outbound traffic only from another security group
+- `Network Access Control List`
+    - apply at the subnet level
+    - only apply to traffic entering/exiting the subnet
+    - stateless firewall
+    - process rules in order
+        - rules are numbered, and are evaluated in this order
+    - support allow and deny rules
+    - apply to all instances in the subnet it is associated with
+
+
+### Amazon VPC Peering ###
+![text](./images/vpc/peering.png)
+- Allow routing between `VPCs` via AWS network
+- Enables routing using private IPv4/6 addresses
+- **CIDR blocks must not overlap**
+- Does not support transitive peering, must mesh the network if we want that 
+    - see [AWS Transit Gateway](#aws-transit-gateway)
+- `VPC` can be in different `accounts` and `regions`
+- Must set up `Security Group` protocols and `Route Tables` for this to work
+
+
+### Creating Peering Connection ###
+- create all resources (VPC, Subnet etc,..)
+- Configure `security groups` to allow traffic from the other `VPC` CIDR Block
+- `VPC` management console select `VPC peering connection` and fill out the details
+- In the other `Region/VPC` must accept the peering request
+- The must create the route tables in order to have traffic routed to each other
+![text](./images/vpc/example-peering-route-table.png)
+
+
+### VPC Endpoints ###
+![text](./images/vpc/internet-and-gateway-endpoints.png)
+- `VPC Interface Endpoint` - creates `ENI` in `subnet`
+    - allows EC2 to connect to other AWS services but not the internet
+    - uses private IP
+
+- `VPC Gateway Endpoint` - uses the **route table** to create a path to the resource
+    - `S3` and `DynamoDB` only
+    - can allow us to connect from `private subnet` to `s3` bucket without having a public ip
+    - can secure this with `IAM` `policies`
+
+![text](./images/vpc/internet-provider-model.png)
+- Can create a model where the is a `Service VPC` and `Consumer VPC` for separation of concerns 
+
+- see [these directions](./aws-saa-code-main/amazon-vpc/create-s3-gateway-endpoint.md)
+
+### AWS Client VPN ###
+![text](./images/vpc/client-vpn.png)
+- Way to connect client computer to a AWS data center `VPC` from your computer
+- Encrypted End to End
+- Create a VPN Endpoint that associates with `subnets`
+- Client computer needs a VPN client
+    - Establishes connections via SSL/TLS
+    - Performs source network address translation between VPC client and `VPC`
+
+### AWS Site to Site VPN ###
+![text](./images/vpc/site-to-site-vpn.png)
+- Managed IPSec VPN
+- Connect a customer data center/office location into AWS data center
+- Allows for use of private IP's 
+- AWs creates a `Virtual Private Gateway (VGW)`, customer deploys `Customer Gateway` 
+    - allow for an encrypted connection supporting static routes and BGP 
+- `Route table` has a route for the CIDR of the external location and send that traffic to the `VGW`
+    - Can be used as a backup for `direct connect`
+
+
+
+### AWS VPN CloudHub ###
+![text](./images/vpc/cloud-hub.png)
+- This is not a service but an architecture pattern when using `Site to Site VPN`
+- Have a `VPC` and `VGW` but multiple customer locations
+    - Can deploy a `Customer Gateway` into each customer location
+    - They will each get their own `ASN` (Autonomous System Number )
+        - Corresponds with routes advertised into the networks
+- Network traffic is bi-directional and could also go between customer locations 
+    - using IPSec VPN
+- "Connect multiple customer gateways to a VGW to allow for networking of customer locations"
+
+
+### AWS Direction Connect (DX) ###
+![text](./images/vpc/dx1.png)
+
+- Private connection from your data center to `AWS VPC`
+- There are locations call `AWS Direct Connect Locations`
+    - allow for hard wiring into an AWS DX port 
+    - Need a physical connection from the `AWS Direct Connect Location` to your corporate equipment
+- Provides private and consistent experience
+    - Can be expensive and is only worth it if transferring large amount of data on a regular basis 
+- To connect to other private AWS services you need to create a `private VIF (Virtual Interface)` 
+- To connect to public services like `S3` you need to create a `Public VIF` in any region
+    - does not allow internet connection
+
+![text](./images/vpc/dx2.png)
+- to connect to multiple `VPCs` you will need multiple `private VIF`
+- **DX connections are not encrypted**
+    - Can use an `IPSec Site to Site VPN` over the `DX connection `
+
+- For Dedicated Connections, 1 Gbps, 10 Gbps, 100 Gbps, and 400 Gbps ports are available. 
+- For Hosted Connections, connection speeds of 50 Mbps, 100 Mbps, 200 Mbps, 300 Mbps, 400 Mbps, 500 Mbps, 1 Gbps, 2 Gbps, 5 Gbps, 10 Gbps, and 25 Gbps may be ordered from approved AWS Direct Connect Partners.
+
+- regional service, makes sense if there a regional customer locations
+
+### AWS Direct Connect Gateway ###
+![text](./images/vpc/dx-multi-region.png)
+- Allows the `Private VIF` to connect to multiple `AWS regions `
+    - traffic flows over `AWS Backbone`
+    - Cannot route regional traffic from 1 region to another
+    - Can connect a single office to multiple regions
+
+
+
+### AWS Transit Gateway ###
+![text](./images/vpc/transit-gateway.png)
+- "Cloud Router"
+- Helps to solve the `VPC` mesh requirement
+- Becomes the network transit hub for all `VPCs` and `Customer Gateways`
+    - One subnet is specified from each `VPC`, allow routing in the whole `VPC`
+- Can also configure this with `Direct Connect`
+    - Requires `Transit VIF`
+
+### Using IPv6 in a VPC ###
+![text](./images/vpc/ipv6-1.png)
+    - IPv4 - 32 bits - decimal - 4.3 billion addresses
+        - NAT used extensively
+        - Exhausting the Addresses
+    - IPv6 - 128 bits - hexadecimal - over 340 duodecillion (12) addresses
+        - 100 for every atom on earth
+
+![text](./images/vpc/ipv6-2.png)
+- need both and IPv4 and IPv6 blocks in `VPC`
+- need to have a unique hexadecimal pair in the subnet
+- have both a local and `igw` route in the `Route Table`
+- all IPV6 are publicly routable
+- `Egress Only Internet Gateway` - allows IPv6 traffic outbound but not inbound
+
+### VPC Flow Logs ###
+![text](./images/vpc/flow-logs.png)
+
+- Capture information about IP traffic to and from network interfaces in `VPC`
+    - Have to create a role to allow the VPC to write these logs
+    - Then create a flow under `VPC -> Flow Logs`
+- Stores in `Cloudwatch Logs` or `S3`
+    - would be under Cloudwatch Log Groups
+
+- Can be created at the `VPC`, `Subnet` or `Network Interface` level
+
+
+
+## Amazon Simple Storage Service (S3)##
+- One of the first AWS services
+- https://digitalcloud.training/amazon-s3-and-glacier/
