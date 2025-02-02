@@ -27,7 +27,7 @@
                 "s3:GetObject"
             ],
             "Resource": [
-                "arn:aws:s3:::my-example-bucket/*"
+                "arn:aws:s3:::permissions-test-12358418/*"
             ]
         }
     ]

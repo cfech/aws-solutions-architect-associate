@@ -3,7 +3,7 @@
 
 
 **Sections**
-
+1. [Global Services Index](#global-services)
 2. [Identity and Access Management (IAM)](#iam)
 3. [Elastic Compute Cloud (EC2)](#ec2)
 4. [Elastic Load Balancing and Auto Scaling](#elastic-load-balancing-and-auto-scaling)
@@ -11,6 +11,10 @@
 6. [AWS Virtual Private Cloud (VPC)](#aws-virtual-private-cloud-vpc)
 7. [Amazon Simple Storage Service (S3)](#amazon-simple-storage-service-s3)
 
+
+## Global Services ##
+- IAM
+- S3
 
 ## IAM ###
 - https://digitalcloud.training/aws-iam/
@@ -910,4 +914,276 @@
 
 ## Amazon Simple Storage Service (S3)##
 - One of the first AWS services
+- **Global service**
 - https://digitalcloud.training/amazon-s3-and-glacier/
+
+### Amazon Simple Storage Service
+![text](./images/s3/s3.png)
+
+- A `bucket` is a container for objects
+- `object` can be any type of files 
+- can stores millions of `objects`
+    - cheap way to store large quantities of files in the cloud
+- Access the `object` with the url
+    - the key 0s the name of the `object` or file
+- Uses HTTP
+- Can use an SDK for interacting with `bucket` in code
+- **`Bucket` name must be unique across all of aws**
+- S3 sits outside the `VPC` in the public space of `aws`
+    - in general if you were to connect to `S3` you would have to reach out to it over the internet
+    - in order to connect to `S3` from a `private subnet` you can create an `S3 Gateway Endpoint`
+
+- File Storage creates a hierarchy, function like local storage, maintain connection and are mounted to operating system
+    - ie `EFS`
+- `S3` is no hierarchical
+    - can use `prefixes` to mimic hierarchy
+    - Network connection is ended after each request
+
+### Storage Classes ###
+![text](./images/s3/storage-classes.png)
+- `S3` offers 11 9's of durability
+    - if you store 10 million objects then you expect to lose one every 10,000 years
+- All `S3` availability is >= 99.5%
+    - varies from 99.5% -> 99.99% 
+- All designed for durability
+- All have different costs 
+- `One Zone IA` - only stored in 1 AZ
+    - All others have 3+ 
+- `S3 Standard` - default
+- `Intelligent tiering` - tries to determine the tier for you 
+- `Glacier` used for archival purposes
+    - `Instant retrieval` - ms latency, more $$ minimum of 90 days
+    - `Flexible Retrieval` - mid tier, faster than deep archive (minutes)
+    - `Deep Archive` - long term storage for compliance, unlikely to need to access it  (hours)
+
+
+### IAM Policies, Bucket Policies and ACLs ###
+- https://aws.amazon.com/blogs/security/iam-policies-and-bucket-policies-and-acls-oh-my-controlling-access-to-s3-resources/
+![text](./images/s3/iam-policies.png)
+- `IAM Policies` - identity based policies
+    - Specify what actions are allowed on what resources
+    - attached to uses groups or roles
+    - written in JSON
+    - principal is not required
+    - Used when:
+        - need to control access to AWS services other than `S3`
+        - Have numerous `S3` buckets each with different permission requirements
+        - Prefer to keep access control policies in the IAM Environment 
+
+- `Bucket Policies` - resourced based 
+    - can only be attached to `S3 Buckets`
+    - JSON/ `AWS Policy Language`
+    - Includes `Principal`
+    - Use when:
+        - simple way to grant cross account access
+        - IAM policies are reaching size limit
+        - keep access control policies in S3 environment 
+
+![text](./images/s3/acls.png)
+- `Access Control List (ACL)` - legacy control mechanism
+    - not recommended by AWS 
+    - can be attached to a `bucket` or an `object`
+    - limited options for grantees and permissions
+
+
+### Versioning, Replication and LifeCycle Rules ###
+![text](./images/s3/versioning.png)
+- Versioning - keep multiple versions of the object in the bucket
+    - can revert if you need to (accidental deletion/override)
+- Replication 
+    - `Cross Region Replication` (CRR) - keep data in 2 different `Regions`
+    - `Same Region Replication` (SRR)
+    - Versioning must be enabled
+
+
+![text](./images/s3/lifecycle.png)
+- Two Types of actions
+    - Transition action - when an object transitions to another storage class
+    - Expiration actions - when an object is deleted
+
+- Cannot transition up the stack of s3 offerings
+    - Additionally cannot transition from Intelligent Tiering to `One Zone IA`
+
+- Steps
+    1. Create 2 buckets
+    2. Create and IAM role
+
+
+### MFA With S3 ###
+![text](./images/s3/mfa.png)
+- When enabled MFA is required for:
+    - Changing the versioning state of a bucket
+    - Permanently deleting an object version
+- the `x-amz-mfa` request heder must be included in the a requests
+- second factor is token from a auth device or program
+- verisign can be enabled by:
+    - Bucket Owners
+    - AWS account that created the bucket
+    - Authorized `IAM` users
+- MFA delete can only be enabled by the bucket owner
+
+- MFA Protected API access
+    - can be use to protect any resource with MFA from API access
+    - `aws:MultiFactorAuthAge` key in the bucket policy
+
+### Amazon S3 Encryption ###
+![text](./images/s3/encryption-1.png)
+
+- Server Side Encryption with `S3 Managed Keys SSE-S3`
+    - `S3` managed keys
+    - encryption at rest with AWS encryption
+    - secured in transit by HTTPS
+- Server Side encryption with `AWS KMS Managed Keys (SSE-kMS)`
+    - `KMS` manage keys
+    -  AWS or customer managed keys
+
+- Server Side encryption with  `Client Provided Keys (SSE-C)`
+    - client manages the keys and not stored in AWS
+- Client Side Encryption
+    - client managed keys
+    - data is encrypted before sending to `S3`
+
+
+- All `S3` buckets have encryption configured by default
+- All uploads encrypted
+- No addition cost or performance impact
+- Automatically encrypted with `SSE-S3`
+- Can use `Batch Operations` to encrypted existing unencrypted files
+- Can also encrypt existing objects using the `CopyObject` APi operation or `copy-object` CLI command
+
+
+![text](./images/s3/encryption-policy.png)
+- can use bucket policies to enforce encryption type we want 
+
+
+### S3 Event Notifications 
+![text](./images/s3/sns.png)
+- requires an `SNS topic`
+    - this `topic` should be allowed to receive events from `S3`
+
+- example Access Policy:
+```
+{
+    "Version": "2012-10-17",
+    "Id": "example-ID",
+    "Statement": [
+        {
+            "Sid": "Example SNS topic policy",
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "s3.amazonaws.com"
+            },
+            "Action": [
+                "SNS:Publish"
+            ],
+            "Resource": "arn:aws:sns:us-east-1:156041403698:email",
+            "Condition": {
+                "ArnLike": {
+                    "aws:SourceArn": "arn:aws:s3:::sns-lab-1231231"
+                },
+                "StringEquals": {
+                    "aws:SourceAccount": "156041403698"
+                }
+            }
+        }
+    ]
+}  
+```
+- then need to create an event on the `S3` bucket
+
+
+### S3 Presigned URLS
+- a way to grant access to resources for a period of time without change the access permission of the bucket
+- `aws s3 presign s3://sns-lab1231231/presigned-index.html`
+
+
+### Multipart Upload and Transfer Accelerator ###
+![text](./images/s3/multi-part-upload.png)
+
+- `Multipart Upload`
+    - perfumed using multipart api
+    - recommended for objects 100MB +
+    - required for objects > 5GB
+    - can be used ofr 5MB - 5TB
+    - Key benefits:
+        - optimize throughput
+        - allow for failure recovery
+
+- `Transfer Acceleration`
+    - uses `CloudFront` edge locations to improve performance 
+    - upload to an edge location and then traverse AWS Global Backbone to the correct `Region` where the `Bucket` lives
+    - Only charged if there is an actual realized benefit from the accelerator
+
+
+
+### S3 Select and Glacier Select ###
+![text](./images/s3/select.png)
+- Can use `S3 Select` to retrieve individual files within a zip in a bucket
+    - uses SQL expression
+- Glacier Select - for S3 Glacier
+- "Use SQL to access objects and objects within objects in S3"
+
+
+### Server Access Logging ###
+![text](./images/s3/server-access-logging.png)
+
+- Allows for logging around events that happen in `S3`
+    - Have to enable logging 
+    - Want the target to be different then the source
+        - If not there would be a loop
+- Provides detailed record for requests
+- Disabled by default
+- Only pay for what storage is used
+- Must grant write permissions to the Amazon S3 Log Delivery group 
+
+### S3 Static Website ###
+1. Create a bucket
+    - must enable it to public access
+2. In properties turn on `Static WebSite Hosting`
+    - this will generate an http url
+    - if we wanted https would have to use other services or put a `cloudfront` endpoint in front on this one
+3. Upload index.html and any other files
+4. Update the permissions to allow anyone to get the objects in the bucket
+```
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Allow access",
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": "s3:getObject",
+            "Resource": "arn:aws:s3:::website-11111/*"
+        }
+    ]
+}
+```
+
+
+### Cross Origin Resource Sharing (CORS)
+![text](./images/s3/cors.png)
+- May be required to be enabled in `S3`
+    - May need to get some assets to the other bucket
+- ie: `example1.com` (origin) sends a request to `resource1.com`
+    - running in javascript
+    - when a connection request issued a preflight request will be made to check if we are allowed to make a request to the other resource
+    - have to explicitly allow this on the other resource 
+- Enable through a cors Rule on the bucket we are trying to connect to
+
+
+### Cross Account Access 
+![text](./images/s3/cross-account-access.png)
+- Will allow cross account access to assume a role to access an `S3` bucket
+
+- see [example of role](./aws-saa-code-main/aws-iam/cross-account-role.md)
+
+### S3 Object Lambda
+![text](./images/s3/s3-lambda.png)
+
+- Uses `Lambda` to process the output of S3 Get requests
+- Can use your own functions or pre-built functions
+- Need `S3` and `S3 Access points` as well as a `Lambda` function and `S3 Object Lambda Access Point`
+    - When a client sends  get request it triggers `lambda` to process the object and return it to the application
+
+
+## DNS, Caching, Performance Optimization ##

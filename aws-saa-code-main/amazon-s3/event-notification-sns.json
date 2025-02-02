@@ -11,13 +11,13 @@
             "Action": [
                 "SNS:Publish"
             ],
-            "Resource": "SNS-topic-ARN",
+            "Resource": "arn:aws:sns:us-east-1:156041403698:email",
             "Condition": {
                 "ArnLike": {
-                    "aws:SourceArn": "arn:aws:s3:*:*:bucket-name"
+                    "aws:SourceArn": "arn:aws:s3:::sns-lab-1231231"
                 },
                 "StringEquals": {
-                    "aws:SourceAccount": "bucket-owner-account-id"
+                    "aws:SourceAccount": "156041403698"
                 }
             }
         }

@@ -8,7 +8,7 @@
             "s3:ListBucket"
          ],
          "Resource":[
-            "arn:aws:s3:::SOURCE-BUCKET"
+            "arn:aws:s3:::myawsbucket-1e21323f23f24f"
          ]
       },
       {
@@ -19,7 +19,7 @@
             "s3:GetObjectVersionTagging"
          ],
          "Resource":[
-            "arn:aws:s3:::SOURCE-BUCKET/*"
+            "arn:aws:s3:::myawsbucket-1e21323f23f24f/*"
          ]
       },
       {
@@ -29,7 +29,7 @@
             "s3:ReplicateDelete",
             "s3:ReplicateTags"
          ],
-         "Resource":"arn:aws:s3:::DESTINATION-BUCKET/*"
+         "Resource":"arn:aws:s3:::permissions-test-12358418/*"
       }
    ]
 }
