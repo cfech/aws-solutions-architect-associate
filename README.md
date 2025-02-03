@@ -10,11 +10,18 @@
 5. [AWS organizations](#aws-organizations)
 6. [AWS Virtual Private Cloud (VPC)](#aws-virtual-private-cloud-vpc)
 7. [Amazon Simple Storage Service (S3)](#amazon-simple-storage-service-s3)
-
+8. [DNS, Caching and Performance Optimization](#dns-caching-performance-optimization)
+9. [Block and File Storage Systems](#block-and-file-storage)
 
 ## Global Services ##
 - IAM
-- S3
+- CloudFront
+- Billing and Cost Management
+- Route53
+- AWS Organization
+- AWS Artifact
+- AWS Health Dashboard
+- S3 (from a bucket name perspective)
 
 ## IAM ###
 - https://digitalcloud.training/aws-iam/
@@ -23,6 +30,7 @@
 - Groups: `IAM` groups are collections of `IAM` users that you can use to simplify permissions management by assigning permissions to the group instead of individual users.
 - Roles: `IAM` roles are sets of permissions that you can assign to AWS resources (like `EC2` instances) or federated users, allowing them to assume specific permissions without having long-term credentials.
     - short term
+    - have `Trust Relationships` which define who/what can assume this role
 - Policies: `IAM` policies are documents that define permissions for users, groups, or roles, specifying which actions they can perform on which resources.
     - Policies are the rules.   
     - Users, groups, and roles are who the rules apply to.
@@ -141,13 +149,13 @@
         - `172.31.0./15 : local`
         - `0.0.0.0 : nat-gateway-id` (lives in `public subnet` which then send traffic to internet gateway)
 
-### Launching EC2 ### ###
+### Launching EC2 ###
 - chose [instance type](https://aws.amazon.com/ec2/instance-types/)
 - chose AMI (includes OS and software)
     - back by a snapshot (point in time backup)
     - create create our own custom `AMI`
 
-### Instance Metadata ### ###
+### Instance Metadata ###
 - can be curled by `curl http://[ip]/latest/meta-data
 - includes various data such as AMI-ID, hostname, etc...
 - 2 versions of the instance metadata service
@@ -1187,3 +1195,295 @@
 
 
 ## DNS, Caching, Performance Optimization ##
+- https://digitalcloud.training/amazon-route-53/
+- https://digitalcloud.training/amazon-cloudfront/
+- https://digitalcloud.training/amazon-cloudfront/
+
+![text](./images/route53/route53.png)
+![text](./images/route53/routing-policies.png)
+
+
+### DNS and Amazon Route 53 ###
+![text](./images/route53/dns-records.png)
+- DNS - translates FQDN to IP Address
+    -  there is a `.` at the root of the DNS hierarchy
+
+- There are multiple different types of DNS records
+    - A : Ip <-> Domain Name
+    - CNAME: Domain Name to another Domain Name
+        - `Route53` Charges for queries 
+        - Cannot create a CNAM record at the top (zone appex) node of a DNS Namespace
+            - only can create sub domains
+    - MX: returns mail servers
+    - TXT: associates text with the domain name
+    - SRV: server locator records
+    - NS: name server for the particular domain
+    - SOA: `Start of Authority` - stores important information about the domain
+
+- Alias - A DNS record that maps a domain name to a hostname, such as an AWS resource. 
+    - `Route53` specific
+    - can only point to:
+        - `CloudFront Distribution`
+        - `Elastic Beanstalk`
+        - `ELB`
+        - `S3 Bucket with static website`
+        - `Another record in the same hosted zone`
+
+- `Route53` - is a dns service
+    - can register a public domain name 
+    - will create a `Hosted Zone`
+        - 2 types of `Hosted Zones`
+            - public - determines hos traffic is routed on the internet
+            - private - determines how traffic is routed within a `VPC`
+                - must set `enableDNSHostName` and `enableDNSSupport` to true
+        - endpoints can be domain IP's or Domain Names
+    - Can perform health checks 
+        -  can chose routing policies based on these health checks
+    - Logic for traffic flow to different services
+    - Can transfer existing domains into `Route53` if the top level domain is supported
+    - Can transfer a domini from `Route53` but must contact AWS
+    - Can have a domain in 1 AWS account and `hosted zone` in another account
+    - Support Health Checks 
+
+![text](./images/route53/r-policies-2.png)
+
+- `Hosted Zone` - represents a set of records belonging to a domain
+
+- Multiple routing policies
+    - Simple - simple DNS response providing IP Address
+    - Failover  - if primary is down, route to secondary
+    - Geolocation - routes to closes region
+    - Geoproximity - closest region in a geographic area
+    - Latency - region with lowest latency
+    - Multivalue answer - return server IPs and function as a load balance3r
+    - Weighted - use relative weights to assigned resources
+    - IP Based - route based on the originating IP
+
+| Feature | Geolocation | Geoproximity |
+|---|---|---|
+| **Routing basis** | User location | User location + resource location |
+| **Bias option** | No | Yes (to influence traffic distribution) |
+| **Primary goal** | Localized content, regional compliance | Latency optimization, flexible load balancing |
+
+
+
+### Route 53 Routing Policies ###
+
+![text](./images/route53/simple.png)
+- Simple records in the hosted zone
+    - A records with 1+ IP addresses for each domain
+    - TTL - how long is the record cached in client DNS cache before refreshing
+1. client issues dns query which makes it was to `Route53`
+2. `Route53` responds with the IP
+3. Client connects to the service with the given IP
+
+![text](./images/route53/weighted.png)
+- Create multiple records with the same name but different IPs
+- The weights will direct the proportional amount of traffic to each IP
+- Weights are defined as a integer between 0 and 255 
+- `Route53` supports optional health checks for this strategy and will not send back IP's whose health check failed
+
+
+
+![text](./images/route53/latency.png)
+- Multiple records with same Domain name
+    - Can be `EC2s` or Load balancers etc...
+- Health checks occur (optional)
+- Depending on where the clients are they get routed to different regions based on latency
+
+
+![text](./images/route53/failover.png)
+- Multiple records with same Domain name, one primary and one secondary
+- When query comes in the response will point to the primary if the primary is healthy
+- Will be forwarded to secondary if the primary health check fails
+
+
+![text](./images/route53/geo-location.png)
+- Multiple records with same Domain name
+- Health checks defined
+- In this strategy there is also a region defined, calls will go to the closest region?
+
+
+![text](./images/route53/multi-value.png)
+- Can have multiple records with the same name and multiple IPs
+- `Route53` will route connects to these records in a Load balanced fashion
+- Will direct to health endpoints only
+
+
+
+![text](./images/route53/geoproximity.png)
+- Uses `Traffic Flow`, must create a policy 
+- Can specify soe coordinates and then point to specific instances based on the coordinates
+
+
+![text](./images/route53/ip-based.png)
+- Create CIDR collection with the CIDR Blocks of the clients
+- Can create routing rules which route based on the CIDR collection
+
+### Route53 Resolver ###
+![text](./images/route53/resolver.png)
+
+- Works with `Route53` DNS servers and on premises DNS Server
+- `Outbound Endpoint`  - connects to DNS server on premises
+- `Inbound endpoint` - will allow client in data center to resolve and address in `Route53`
+
+### Amazon CloudFront Origins and Distributions ###
+![text](./images/route53/cloudfront-origins.png)
+
+- AWS CDN - service files such as images and videos
+- `Origin` - where the content is coming from ie: `S3` or `EC2`
+- `Edge Locations` - locations all over the world
+    - The content is sent from the origin to the edge locations
+    - This is sent over the AWS global network
+- Users access the edge locations
+    - the goal is to reduce the latency
+    - distance is one of the main factors in latency
+- Users are directed to nearest edge location
+- When you create a `Cloudfront Distribution` you get a domain name
+    - can use your own domain name
+    - When you create the distribution you set the origin such as `S3` or a custom origin 
+    - access via http or https
+    - can use live streaming and fill out web forms 
+    - Distribution Patterns:
+        - Path - someone looking for a specific path go to one origin ver another
+        - Viewer - redirect to https?
+        - Cache - how long thins stay in the cache
+        - Origin Request Policy - configure security and other factors of the request to the origin
+    
+
+### Cloudfront Caching and Behavior ###
+![text](./images/route53/cfc-1.png)
+- Example with 2 `origins`
+- There are regional edge cached 
+    - site between `origin` and `edge locations`
+    - 12 of these
+- 212 `Edge locations`
+    - once a user  connects to the edge location all traffic goes over the AWS global network
+- `Cloudfront` can push content to an edge location
+    - if there is a cache miss on a user request at the `Edge Location` then it will go to the `Regional Edge Cache`, if there is a miss there then there will be an `origin fetch` to get the file from the origin
+    - This will be cached along the way and will expire with the TTL
+    - If you have dynamic objects it would be better to have a smaller TTL
+
+
+![text](./images/route53/cfc-2.png)
+- You can define a maximum TTL and default ttl
+- Different file types can have different TTL
+- Cna use headers to control the cache
+- After expiration cloudfront will ensure it has the latest version
+
+- `Path Patterns`
+    - ex: any requests for *.jpg should be sent to `origin1`
+        - the path pattern determines where toi send the request
+    
+
+![text](./images/route53/cfc-3.png)
+- Can configure `CloudFront` to forward headers in request to the `origin`
+    - Can forward all headers, a whitelist or only default headers
+    - `Cloudfront` can then cache multiple versions of an object based on the values in one or more request headers
+
+
+### CloudFront Signed URLs and OAI/OAC ###
+![text](./images/route53/signed-url.png)
+- `Signed Urls` provide more control over access to content, like giving a user a 1 time url for access
+    - individual files
+    - can specify beginning and expiration 
+    - can specify IP addresses
+    - should be used for individual files and clients that do not support cookies
+
+- `Signed Cookies` - similar tyo `Signed Urls`
+    - use when you don't want to change urls
+    - **can provide access ot multiple restricted files**
+
+![text](./images/route53/oai-oac.png)
+- `Cloudfront Origin Access Identity`
+    - A special type of user/rile that allows the `Cloudfront` distribution to access he custom origin `S3` bucket
+    - restricts access to `OAI` only
+    - only useful for `S3`
+    - **Deprecated**
+- `Cloudfront Origin Access`
+    - recommended from AWS
+    - like an OAI but with more use cases
+    - Requires S3 Bucket policy that allows CloudFront service principle
+    - restricts content so it can only be accessed by the cloudfront Distribution
+
+
+### Cloudfront Cache and Behavior Settings ###
+[see files here](./aws-saa-code-main/aws-cloudfront)
+1. Create 3 `S3` buckets
+    - pdf-bucket
+    - jpeg-bucket
+    - static website
+2. Configure `S3` for the static website:
+    - Enable public access
+    - Configure as a static website
+    - Add the index.html (when ready)
+    - have to update the bucket policy
+```
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Allow access",
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": "s3:getObject",
+            "Resource": "bucket name"
+        }
+    ]
+}
+```
+3. Configure Amazon CloudFront:
+    - Create a new CloudFront distribution
+    - Add the static website as an origin (use website endpoint)
+    - Disable caching
+    - Add 2 more origins for the buckets containing the files and create/configure OAC
+    - Configure cache behavior settings for each origin based on file type (PDF or JPG) and default going to the static website
+
+### Cloudfront SSL/TLS and SNI  ###
+![text](./images/route53/ssl-tls.png)
+
+- To use `AWS Certificates Manager (ACM)` the CloudFront certificate must come from `us-east-1`
+    - can bring your own certificate
+- Default CF domain name can be changed using `CNAME` DNS record
+- You can SSL secure S3 and `Customer Origins`
+    - `S3 Origin` already has this configured and cannot be changed
+    - `Origin` certs must be public
+    - `Custom Origin` (ie: `EC2` or `ALB`)
+        - `EC2` - can use 3rd party cert
+        - `ALB` - can use `ACM` cert
+
+- When a user issues a request it will be secured with SSl/TLS 
+    - known as the `viewer protocol` - the protocol between the viewer and the user
+        - ean encore HTTPS or allow HTTP as well, upgrade to HTTPS etc...
+
+- `CloudFront Server Name Indication (SNI)`
+    - allows you to have to separate TLS certificates corresponding to different domain names running on the same IP address in `CloudFront`
+    - users can connect to different domain names but hit the same `Cloudfront Distributions`
+        - knows this from the `host` header
+
+
+### Lambda Edge ###
+![text](./images/route53/lamda-edge.png)
+- Allows you to run Node.js and Python functions to customize what is returned to the viewer
+    - Cane be run at multiple points during the life cycle
+
+### AWS Global Accelerator ###
+![text](./images/route53/global-accelerator.png)
+
+- Networking service that allows you to utilize AWS Global Network to send data to your applications
+    - provides lower latency and more consistency then the regular internet
+
+- 2 Users in the US
+- If we have 2 endpoints and are using `Global Accelerator`, `Route 53` will return back 2 static anycast IP addresses that point to `Global Accelerator Endpoint`
+    - when you use an alias record in `Route 53` you map the domain name to the domain name of the `Global Accelerator` (or other service) endpoint
+        - need to resolve the DNS name of the `Global Accelerator` to its IP
+        - either IP will take you any region that is active
+            -  you should be directed to the region closest if there are no weights
+    - Will eventually be direction ot an `AWS Edge Location` closest to the user
+        - use `AWS global network` to connect to the Application Endpoints
+            - uses the static anycast IPs
+        - only use the public internet for the users to get from their device to the `edge location`
+- If one site fails the request will be re-routed to the other endpoint
+    - even if a user in the us has to go to `ap-southeast-2` since they are using the `AWS global network` the connection should be a lot faster and more reliable
+
+## Block and File Storage ##
