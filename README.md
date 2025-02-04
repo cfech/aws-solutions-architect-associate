@@ -1810,27 +1810,54 @@
 ## Serverless Applications ##
 
 ### Serverless Services and Event Driven Architecture ###
+![text](./images/serverless/serverless.png)
 
 ### AWS Lambda ###
-
+![text](./images/serverless/01-lambda.png)
+![text](./images/serverless/02-lambda.png)
+![text](./images/serverless/03-lambda.png)
 
 ### Application Integration Services Overview ###
+![text](./images/serverless/services.png)
+
 
 ### Amazon SQS ###
+![text](./images/serverless/01-sqs.png)
+![text](./images/serverless/02-sqs.png)
+![text](./images/serverless/03-sqs.png)
+![text](./images/serverless/04-sqs.png)
+![text](./images/serverless/05-sqs.png)
 
 ### Amazon SNS
+![text](./images/serverless/01-sns.png)
+![text](./images/serverless/02-sns.png)
+
 
 ### Simple Event Driven APP ###
-
+![text](./images/serverless/event-driven.png)
 
 ### AWS Step Functions
+
+![text](./images/serverless/step-functions.png)
 
 ### Create a State Machine ###
 
 
 ### Amazon EventBridge ###
+![text](./images/serverless/01-event-bridge.png)
+![text](./images/serverless/02-event-bridge.png)
+
+### Create Event Bus and Rule
+![text](./images/serverless/event-bus.png)
+
 
 ### Amazon API Gateway ###
+![text](./images/serverless/01-gateway.png)
+![text](./images/serverless/02-gateway.png)
+![text](./images/serverless/03-gateway.png)
+![text](./images/serverless/04-gateway.png)
+
+
 
 ## Database and Analytics ##
 
