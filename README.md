@@ -1863,67 +1863,128 @@
 
 ### Database Types and Use Cases ###
 
+![text](./images/db-and-analytics/01-db.png)
+![text](./images/db-and-analytics/02-db.png)
+![text](./images/db-and-analytics/03-db.png)
+![text](./images/db-and-analytics/04-db.png)
+![text](./images/db-and-analytics/05-db.png)
+
 ### Amazon Relational Database Service (RDS) ###
+![text](./images/db-and-analytics/01-rds.png)
+![text](./images/db-and-analytics/02-rds.png)
+![text](./images/db-and-analytics/03-rds.png)
 
 ### Amazon RDS Backup and Recovery ###
+![text](./images/db-and-analytics/backups.png)
 
 ### Create Amazon RDS Database ###
 
 ### Create a Read Replica ###
 
 ### Amazon RDS Security ###
+![text](./images/db-and-analytics/01-security.png)
+![text](./images/db-and-analytics/02-security.png)
 
 ### Create Encrypted Copy Of RDS Database ###
 
+![text](./images/db-and-analytics/encryption.png)
+
 ### Amazon Aurora ###
 
+![text](./images/db-and-analytics/aurora-1.png)
+![text](./images/db-and-analytics/aurora-2.png)
+
+
 ### Amazon Aurora Deployment Operations ###
+![text](./images/db-and-analytics/aurora-3.png)
+![text](./images/db-and-analytics/aurora-4.png)
+![text](./images/db-and-analytics/aurora-5.png)
 
 ### Amazon RDS Proxy ###
+![text](./images/db-and-analytics/rds-proxy.png)
+
 
 
 ### Amazon Elasticache ###
+![text](./images/db-and-analytics/elasticache-1.png)
+![text](./images/db-and-analytics/elasticache-2.png)
+
 
 ### Scaling Elasticache ###
+
+![text](./images/db-and-analytics/elasticache-3.png)
+![text](./images/db-and-analytics/elasticache-4.png)
 
 ### Create Elasticache Cluster ###
 
 ### Amazon DynamoDB  ###
 
+![text](./images/db-and-analytics/dynamo-1.png)
+![text](./images/db-and-analytics/dynamo-2.png)
+![text](./images/db-and-analytics/dynamo-3.png)
+
 ### Creating A DynamoDB Table ###
 
 ### DynamoDB Streams ###
+![text](./images/db-and-analytics/dynamo-streams.png)
 
 ### DynamoDB Accelerator ###
+![text](./images/db-and-analytics/dynamo-accelerator-1.png)
+![text](./images/db-and-analytics/dynamo-accelerator-2.png)
 
 ### DynamoDB Global Tables ###
-
+![text](./images/db-and-analytics/dynamo-global-tables.png)
 
 ### Enable Global Table ###
 
 ### Amazon RedShift ###
+![text](./images/db-and-analytics/redshift-1.png)
+![text](./images/db-and-analytics/redshift-2.png)
+![text](./images/db-and-analytics/redshift-3.png)
 
 
 ### Amazon Elastic Map Reduce ###
-
+![text](./images/db-and-analytics/emr.png)
 
 ### Amazon Kinesis ###
+![text](./images/db-and-analytics/kinesis-1.png)
+![text](./images/db-and-analytics/kinesis-2.png)
+![text](./images/db-and-analytics/kinesis-3.png)
+![text](./images/db-and-analytics/kinesis-4.png)
 
 ### Amazon Athena and AWS Glue ### 
 - https://aws.amazon.com/blogs/big-data/top-10-performance-tuning-tips-for-amazon-athena/
 
+![text](./images/db-and-analytics/glue-1.png)
+![text](./images/db-and-analytics/glue-2.png)
+![text](./images/db-and-analytics/glue-3.png)
 
 ### Query S3 ALB Access Logs with Athena ### 
 
 
 ### Amazon OpenSearch Service (ElastiSearch)
+![text](./images/db-and-analytics/elasticache-1.png)
+![text](./images/db-and-analytics/elasticache-2.png)
+![text](./images/db-and-analytics/elasticache-3.png)
+![text](./images/db-and-analytics/elasticache-4.png)
+![text](./images/db-and-analytics/elasticache-5.png)
+![text](./images/db-and-analytics/elasticache-6.png)
+
 
 ### AWS Batch
+![text](./images/db-and-analytics/aws-batch.png)
 
 ### Other Database Services 
-
+![text](./images/db-and-analytics/other-db-1.png)
+![text](./images/db-and-analytics/other-db-2.png)
+![text](./images/db-and-analytics/other-db-3.png)
 
 ### Other Analytics Services ###
+![text](./images/db-and-analytics/other-services-1.png)
+![text](./images/db-and-analytics/other-services-2.png)
+![text](./images/db-and-analytics/other-services-3.png)
+![text](./images/db-and-analytics/other-services-4.png)
+![text](./images/db-and-analytics/other-services-5.png)
 
 
 ## Deployment And Management ##
