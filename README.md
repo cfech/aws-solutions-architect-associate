@@ -1990,54 +1990,84 @@
 ## Deployment And Management ##
 
 ### Infrastructure as Code With AWS CloudFormation ###
+![text](./images/deployment/cloudformation.png)
+
 
 ### Creating and Updating Stacks 
 
+
 ### Create Nested Stack using AWS CLI 
+![text](./images/deployment/nested-stacks.png)
 
 ### Platform as a Service with AWS Elastic Beanstalk
+![text](./images/deployment/beanstalk-1.png)
+![text](./images/deployment/beanstalk-2.png)
+![text](./images/deployment/beanstalk-3.png)
+![text](./images/deployment/beanstalk-4.png)
 
 ### Create an Elastic Beanstalk Service
 
 ### SSM Parameter Store
-
+![text](./images/deployment/param-store.png)
 
 ### AWS Config
+![text](./images/deployment/config-1.png)
+![text](./images/deployment/config-2.png)
 
 
 ### SSM Automation and Config Rules 
 
 ### AWS Secrets Manager
+![text](./images/deployment/secrets-manager.png)
+
+### Ops Works
+![text](./images/deployment/ops-works.png)
 
 
 ### AWS Resource Manager 
+- https://docs.aws.amazon.com/ram/latest/userguide/shareable.html
+![text](./images/deployment/ram.png)
 
 ### Share a Subnet Across Accounts
 
 ### RPO, RTO, DR Strategies
+- https://aws.amazon.com/blogs/architecture/disaster-recovery-dr-architecture-on-aws-part-i-strategies-for-recovery-in-the-cloud/
 
-
+![text](./images/deployment/strategy-1.png)
+![text](./images/deployment/strategy-2.png)
+![text](./images/deployment/strategy-3.png)
 
 ## Monitoring, Auditing and Logging 
  
 ### Amazon CloudWatch Overview
+![text](./images/monitoring/cw-1.png)
+![text](./images/monitoring/cw-2.png)
+![text](./images/monitoring/cw-3.png)
 
 ### Create A custom Metric and Alarm 
 
 ### Amazon Cloudwatch Logs
+![text](./images/monitoring/cw-logs.png)
 
 ### The unified CloudWatch Agent
+![text](./images/monitoring/cw-agent.png)
 
 ### AWS CloudTrail
+
+![text](./images/monitoring/cloud-trail-1.png)
+![text](./images/monitoring/cloud-trail-2.png)
 
 ### Create A Trail In AWS CloudTrail
 
 ### AWS EventBridge (Refresher)
+![text](./images/monitoring/eventbridge.png)
 
 ### Create EventBridge Rule for CloudTrail API Calls
 
 ### Metrics and Analysis Tracking 
-
+![text](./images/monitoring/metrics-1.png)
+![text](./images/monitoring/metrics-2.png)
+![text](./images/monitoring/metrics-3.png)
 
 ## Security In the Cloud 
 
