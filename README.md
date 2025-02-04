@@ -2072,37 +2072,63 @@
 ## Security In the Cloud 
 
 ### AWS Directory Service
+![text](./images/security/ad-1.png)
+![text](./images/security/ad-2.png)
+![text](./images/security/ad-3.png)
 
 ### Identity Providers and Federation 
+![text](./images/security/id-1.png)
+![text](./images/security/id-2.png)
 
 ### IAM Identity Center in Action
 
 ### Amazon Cognito
-
+![text](./images/security/cognito-1.png)
+![text](./images/security/cognito-2.png)
 
 ### Encryption Primer 
-
+![text](./images/security/encryption-1.png)
+![text](./images/security/encryption-2.png)
 
 ### AWS Key Management Service (KMS)
+![text](./images/security/kms-1.png)
+![text](./images/security/kms-2.png)
+![text](./images/security/kms-3.png)
+![text](./images/security/kms-4.png)
+![text](./images/security/kms-5.png)
+![text](./images/security/kms-6.png)
+![text](./images/security/kms-7.png)
 
 ### AWS CloudHSM 
+![text](./images/security/cloud-hsm.png)
 
 ### AWS Certificate Manager 
+![text](./images/security/acm-1.png)
+![text](./images/security/acm-2.png)
 
 ### SSL/TLS Certificate ACM
 
 ### AWS Web Application Firewall
+![text](./images/security/waf-1.png)
+![text](./images/security/waf-2.png)
+![text](./images/security/waf-3.png)
 
 ### Amazon inspector 
+![text](./images/security/inspector-1.png)
+![text](./images/security/inspector-2.png)
 
 ### Amazon Macie 
+![text](./images/security/macie.png)
+
 
 ### AWS Guard Duty
+![text](./images/security/guard-duty.png)
 
 ### AWS Shield
-
+![text](./images/security/shield.png)
 
 ### Defense In Depth 
+![text](./images/security/did.png)
 
 
 
@@ -2110,35 +2136,59 @@
 ## Migration and Transfer 
 
 ### AWS Migration Tool Overview
-
 ### AWS Application Discovery Service 
+![text](./images/migration/tools-1.png)
+![text](./images/migration/tools-2.png)
+
+
+![text](./images/migration/tools-2.png)
 
 
 ### Database Migration Service (DMS)
+![text](./images/migration/dms-1.png)
+![text](./images/migration/dms-2.png)
 
 ### AWS Application Migration Service (MGN)
+![text](./images/migration/mgn-1.png)
+![text](./images/migration/mgn-2.png)
 
 ### AWS DataSync
+![text](./images/migration/datasync.png)
 
 ### AWS Snowball Family 
+![text](./images/migration/snowball-1.png)
+![text](./images/migration/snowball-2.png)
 
 ### The 7Rs of Migration 
+![text](./images/migration/r-1.png)
+![text](./images/migration/r-2.png)
 
 
 ## Web, Mobile, ML, Cost Management
 
 ### AWS Amplify and AppSync
+![text](./images/mobile/amplify.png)
+![text](./images/mobile/app-sync-1.png)
+![text](./images/mobile/app-sync-2.png)
 
 ### AWS Device Farm
 
 ### AWS Machine Learning and AI Services
+![text](./images/mobile/ml-1.png)
+![text](./images/mobile/ml-2.png)
+![text](./images/mobile/ml-3.png)
+![text](./images/mobile/ml-4.png)
+![text](./images/mobile/ml-5.png)
 
 ### Process and Analyze Videos
+![text](./images/mobile/images.png)
 
 ### AWS License Manager
-
+![text](./images/mobile/liscence-manager.png)
 
 ### AWS Compute Optimizer
+![text](./images/mobile/optimizer-1.png)
+![text](./images/mobile/optimizer-2.png)
 
 ### AWS Budgets
 
@@ -2148,3 +2198,5 @@
 
 
 ### AWS Cost Management Tools
+![text](./images/mobile/management-tool-1.png)
+![text](./images/mobile/management-tool-2.png)
