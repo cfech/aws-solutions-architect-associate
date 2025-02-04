@@ -1487,32 +1487,253 @@
     - even if a user in the us has to go to `ap-southeast-2` since they are using the `AWS global network` the connection should be a lot faster and more reliable
 
 ## Block and File Storage ##
+- https://digitalcloud.training/amazon-ebs/
+- https://digitalcloud.training/amazon-efs/
 
 
 ### Block vs File vs Object Storage ###
+![text](./images/ebs/block-storage.png)
+- Block based storage = hard drives and SSD
+    - HDD is a magnetic drives and spinning disk
+        - Slower and cheaper than SSD
+    - SSD - flash memory
+        - newer and faster
+        - more expensive
+    - Create volumes
+    - Can paritition the drive to different sizes
+
+
+![text](./images/ebs/file.png)
+- somewhere there is a block based storage system someone made a file system on top of (NTFS)
+- Used network attaches storage server (NAS)
+    - OS can interact with it just like the other storage
+    - Connection is maintained
+
+![text](./images/ebs/object.png)
+- user uploads `objects` over HTTP rest API
+    - ie: in console or rest api
+        - very easy to integrate into applications
+    - `S3` supports all file types
+    - no defined hierarchy
+    - massively scalable
+
+![text](./images/ebs/comparison.png)
+    - 
 
 
 ### Amazon EBS Deployment and Volume Types ###
+![text](./images/ebs/deployment.png)
+- `EBS volume` is provisioned and attached when launching an `EC2`
+    - OS runs from here
+- Data is in a single AZ
+    - couple replicate to multiple copies but always int he same AZ
+- Can connect multi Ec2 instances to an EBS volume using `EBS MultiAttach` as long as `EC2` is in the same `AZ`
+    - Only avialable for `Nitro` based instances
+    - Must be in same `AZ`
+    - Max 16
+    - Must be provisioned IOPS
+- Can copy a snapshot of the volume to another `AZ`
+![text](./images/ebs/types.png)
+- GP SSD 
+    - GP3 - newer
+    - GP2 SSD - default for `EC2`
+        - no multi attach
+- Provisioned IOPS SSD
+    - support multi-attach
+    - good for low latency
+    - IO2 Block Express - newer 
+    - IO2 - deprecated in Nov 2023
+    - IO1
+        - must fast IOPS
+        - only disk type that supports multi attach
+    
+![text](./images/ebs/hdd-types.png)
+- HDD - cheaper
+    - st1 and sc1
+    - limited IOPS compared to ssd
+    - save money for warehouse
+    - no root capability
+
+- EBS Persist independently of `EC2`
+- Do not need to be attached to an instance
+- Can attach a multiple volumes to a single instance
+- **Must be in same AZ as `EC2`**
+- `Root EBS volumes` are delete on `EC2` deletion by default
+    - non boot volumes are not delete by default
 
 ### Amazon EBS Copying, Sharing and Encryption ###
+![text](./images//ebs/sharing.png)
+- `Snapshot` - point in time copy of the data on the volume
+    - store in `S3`
+        - since this is `regional` we can then create a `EBS Volume` from this in a different `AZ`
+    - snapshots are incremental 
+    - to free storage space, delete all old snapshots and just keep the latest
+    - Can create `Amazon Machine Image (AMI)` from the snapshot 
+![text](./images/ebs/ami.png)
+- `Volume` can create a `snapshot`
+- `Snapshot` can create an encrypted `snapshot`
+
+- `Unencrypted Snapshot`
+    - Can create encrypted volumes from 
+    - cannot create an encrypted `AMI` just unencrypted
+- `Encrypted Snapshot` 
+    - can create an encrypted `AMI` from an encrypted snapshot
+        - cannot share this publicly
+        - must have the custom key
+
+- `Encrypted AMI`
+    - can create an `EC2` instance and change the encryption key
+        - can change encryption state
+    - Can create another encrypted `AMI` and change the key
+        - change the `region`
+
+- `Unencrypted AMI`
+    - Can create `EC2`
+        - change encryption station
+        - change `AZ`
+
+
 
 
 ### Amazon EBS Snapshots and DLM ###
+![text](./images/ebs/dlm.png)
+- `Data LifeCycle Manager (DLM)`
+    - can automate creating `Snapshots` and `AMI` for us
+    - protect data by encoring regular backup schedule
+    - creates standardized AMIs that can be refreshed at regular intervals
+    - retain backups for compline and auditors
+    - reduce storage cost by deleting old backups
+    - created disaster recovery backup policies
+        - backup data to isolated accounts 
 
 
 ### EC2 Instance Store Volumes ###
+![text](./images/ebs/instance.png)
+- Instance Store Volumes are local disks that are physically attached to host computer
+    - extremely high performance
+    - **ephemeral storage**
+    - ideal for temporary storage that changes frequently
+        - buffers, caches, scratch data
+    - volume root devices are created from `AMI` templates stored on `S3`
+    - Volumes cannot be detached and reattached
 
 
 ### Using RAID with EBS ###
-
+![text](./images/ebs/raid.png)
 
 ### Amazon Elastic File System (EFS) ###
+![text](./images/ebs/efs1.png)
+- shared file system
+- can connect instances from multiple `AZ`
+- `Regional` File system
+    - have mount targets in multiple `AZs`
+    - appear as `ENI`
+- Instacnes connect to the mount point in local AZ
+- **Linux only**
+- Uses NFS
+- Can deployed in a single `AZ`  called `One Zone`
+    - can connect from other `AZ` in the `Region`
+
+- Data consistency - write operations for `Regional File Systems` are durably stored across AZ
+- File Locking - NFS client apps can use NFS v4 file locking for read and write operations
+- Storage classes
+    - `EFS Standard` - uses SSds for low latency performance
+    - `EFS Infrequent Access` - cost effective option
+    - `EFS Archive` - even cheaper for less active data
+
+- Durability
+    - all storage classes offer 11 9s of durability
+
+
+![text](./images/ebs/efs2.png)
+- Can be replicated across regions 
+    - Must create a mount point
+    - the replica file system is read only
+- Can connect on prem clients from outside of the cloud
+    - must be linux and use NFS
+    - typically will used a `Direct Connect`
+
+
+
+- EFS replication - data is replicated across `Regions` for disaster recovery purposes
+    - Recovery Point Objective (RPO)/Recovery Time Objective (RTO) in minutes
+- Automatic backup - integrates with `AWS Backup` for automatic backups
+    - `AWS BAckup` is a fully-managed service that makes it easy to centralize and automate data protection across AWS services, in the cloud, and on premises. Using this service, you can configure backup policies and monitor activity for your AWS resources in one place. It allows you to automate and consolidate backup tasks that were previously performed service-by-service, and removes the need to create custom scripts and manual processes. 
+
+- Performance Options
+    - `Provisioned Throughput` - specify level of throughput to be supported
+    - `Bursting throughput` - scales with the amount of storage
+
 
 
 ### Amazon FSx ###
+![text](./images/ebs/fsx.png)
+- Fully managed third party file systems
+    - `FSX` for windows file server
+    - `FSX` for `lustre`
+        - compute intensive
+
+
+![text](./images/ebs/window.png)
+- fully managed native windows file system
+    - full support for many window protocols
+- can be accessed by 1000s of instances
+- High Availability - replicates data withing the `AZ`
+- Multi AZ - create an active stand by file server in separate `AZ`
+- Can have a managed microsoft `AZ` for auth
+- Can access from an on premises client with a `VPN` or `Direct Connect Connection`
+
+![text](./images/ebs/lustre.png)
+- High performance workloads
+    - machine learning
+    - HPC
+    - Video Processing
+    - Financial modeling
+    - Electronic design automation
+- Works natively with `S3`
+- `S3` objects are presented as files in your file system
+    - can write results to `S3`
+- Posix compliant file system
+- Use for cloud bursting and data migration
+- Can access from an on premises client with a `VPN` or `Direct Connect Connection`
 
 
 ### AWS Storage Gateway ###
+![text](./images/ebs/storage.png)
+- Allows you to connect on prem storage to AWS
+- Deploy gateways into your on prem data centers
+    - Allows to connect to storage on AWS
+    - Encrypted in transit
 
 
-### Architecture Patterns – Block and File Storage ###
+![text](./images/ebs/file-gateway.png)
+- Mounted with NFS or SMB in local data center
+- local cache provides low latency
+- virtual gateway appliance runs on some vm
+- store files as objects in `S3`
+    - multiple storage classes
+    - application can talk in file system protocols while talking to `S3`
+
+![text](./images/ebs/volume.png)
+- ISCSI - block based only
+- Cached Volume Mode - cache of most recently used data is stored on prem
+- Stored Volume Mode - entire data set is stored on prem
+    - backed up to `S3`
+    - Snapshots are taken for backup
+
+![text](./images/ebs/tape.png)
+- Backup servers is on premises
+- Connect to a virtual Tape Library
+- Store in `S3`
+    - once tapes are ejected from the backup app they can be stored in other storage classes like glacier and deep archive
+- Used with popular backup software
+    - NetBackup, Backup Exec, Veeam
+- various sizes up to 2.5 TB
+- Can have up to 1500 virtual tapes
+    - max capacity of 1 PB
+- All data is transferred between he gateway and AWS is encrypted with SSL
+- All data stored in encrypted Server Side with `SSE-S3`
+    - encryption keys managed by AWS
+
+
+## Docker Containers and ECS ##
