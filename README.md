@@ -12,6 +12,14 @@
 7. [Amazon Simple Storage Service (S3)](#amazon-simple-storage-service-s3)
 8. [DNS, Caching and Performance Optimization](#dns-caching-performance-optimization)
 9. [Block and File Storage Systems](#block-and-file-storage)
+10. [Docker Containers And ECS](#docker-containers-and-ecs)
+11. [Serverless Applications](#serverless-applications)
+12. [Database and Analytics](#database-and-analytics)
+13. [Deployment And Management](#deployment-and-management)
+14. [Monitoring, Logging and Auditing](#monitoring-auditing-and-logging)
+15. [Security In teh Cloud](#security-in-the-cloud)
+16. [Migration and Transfer](#migration-and-transfer)
+17. [Web, Mobile, ML, Cost Management](#web-mobile-ml-cost-management)
 
 ## Global Services ##
 - IAM
@@ -1518,7 +1526,6 @@
     - massively scalable
 
 ![text](./images/ebs/comparison.png)
-    - 
 
 
 ### Amazon EBS Deployment and Volume Types ###
@@ -1620,6 +1627,19 @@
 
 ### Using RAID with EBS ###
 ![text](./images/ebs/raid.png)
+- RAID - redundant array of independent disks
+    - a way to take multiple disks and aggregate them together
+    - **OS level not provided by AWS, must configure yourself**
+    - RAID 0 and RAID 1 are potential options on EBS
+    - RAID 5 and RAID 6 are not recommended
+- RAID 0 - striping across multiple volumes
+    - if any disk fails you lose your data
+    - 2 + disks
+    - better performance
+- RAID 1 - mirroring
+    - write the same data to two different volumes
+    - redundancy and fault tolerance 
+    - used double the amount of capacity 
 
 ### Amazon Elastic File System (EFS) ###
 ![text](./images/ebs/efs1.png)
@@ -1664,7 +1684,9 @@
     - `Provisioned Throughput` - specify level of throughput to be supported
     - `Bursting throughput` - scales with the amount of storage
 
-
+- `AWS DataSync` - fast and simple way to securely sync existing files systems into `EFS`
+    - Securely and efficiently copy files over internet or direct connect
+    - copies file data and metadata 
 
 ### Amazon FSx ###
 ![text](./images/ebs/fsx.png)
@@ -1737,3 +1759,274 @@
 
 
 ## Docker Containers and ECS ##
+
+### Docker Containers and MicroServices ###
+![text](./images/containers/virtualization.png)
+![text](./images/containers/docker.png)
+![text](./images/containers/cna.png)
+
+### Amazon Elastic Container Services (ECS) ###
+![text](./images/containers/01-ecs-components.png)
+![text](./images/containers/02-ecs-features.png)
+![text](./images/containers/03-ecs-images.png)
+![text](./images/containers/04-ecs-task-definition.png)
+![text](./images/containers/05-ecs-fargate.png)
+![text](./images/containers/06-ecs-iam-roles.png)
+
+### Amazon ECS IAM Roles ###
+![text](./images/containers/01-iam-roles.png)
+![text](./images/containers/02-iam-roles.png)
+![text](./images/containers/03-iam-roles.png)
+
+### Scaling Amazon ECS ###
+![text](./images/containers/01-scaling.png)
+![text](./images/containers/02-scaling.png)
+![text](./images/containers/03-scaling.png)
+
+
+### Amazon ECS With ALB ###
+![text](./images/containers/ecs-alb.png)
+
+### Launch Docker Containers on AWS Fargate ###
+
+### Amazon Elastic Kubernetes Service (EKS) ###
+
+![text](./images/containers/01-eks.png)
+![text](./images/containers/02-eks.png)
+![text](./images/containers/03-eks.png)
+
+### Amazon Elastic Container Registry (ECR) ###
+![text](./images/containers/01-ecr.png)
+![text](./images/containers/02-ecr.png)
+![text](./images/containers/03-ecr.png)
+![text](./images/containers/04-ecr.png)
+![text](./images/containers/05-ecr.png)
+
+
+### AWS App Runner ###
+![text](./images/containers/app-runner.png)
+
+
+## Serverless Applications ##
+
+### Serverless Services and Event Driven Architecture ###
+
+### AWS Lambda ###
+
+
+### Application Integration Services Overview ###
+
+### Amazon SQS ###
+
+### Amazon SNS
+
+### Simple Event Driven APP ###
+
+
+### AWS Step Functions
+
+### Create a State Machine ###
+
+
+### Amazon EventBridge ###
+
+### Amazon API Gateway ###
+
+## Database and Analytics ##
+
+### Database Types and Use Cases ###
+
+### Amazon Relational Database Service (RDS) ###
+
+### Amazon RDS Backup and Recovery ###
+
+### Create Amazon RDS Database ###
+
+### Create a Read Replica ###
+
+### Amazon RDS Security ###
+
+### Create Encrypted Copy Of RDS Database ###
+
+### Amazon Aurora ###
+
+### Amazon Aurora Deployment Operations ###
+
+### Amazon RDS Proxy ###
+
+
+### Amazon Elasticache ###
+
+### Scaling Elasticache ###
+
+### Create Elasticache Cluster ###
+
+### Amazon DynamoDB  ###
+
+### Creating A DynamoDB Table ###
+
+### DynamoDB Streams ###
+
+### DynamoDB Accelerator ###
+
+### DynamoDB Global Tables ###
+
+
+### Enable Global Table ###
+
+### Amazon RedShift ###
+
+
+### Amazon Elastic Map Reduce ###
+
+
+### Amazon Kinesis ###
+
+### Amazon Athena and AWS Glue ### 
+- https://aws.amazon.com/blogs/big-data/top-10-performance-tuning-tips-for-amazon-athena/
+
+
+### Query S3 ALB Access Logs with Athena ### 
+
+
+### Amazon OpenSearch Service (ElastiSearch)
+
+### AWS Batch
+
+### Other Database Services 
+
+
+### Other Analytics Services ###
+
+
+## Deployment And Management ##
+
+### Infrastructure as Code With AWS CloudFormation ###
+
+### Creating and Updating Stacks 
+
+### Create Nested Stack using AWS CLI 
+
+### Platform as a Service with AWS Elastic Beanstalk
+
+### Create an Elastic Beanstalk Service
+
+### SSM Parameter Store
+
+
+### AWS Config
+
+
+### SSM Automation and Config Rules 
+
+### AWS Secrets Manager
+
+
+### AWS Resource Manager 
+
+### Share a Subnet Across Accounts
+
+### RPO, RTO, DR Strategies
+
+
+
+## Monitoring, Auditing and Logging 
+ 
+### Amazon CloudWatch Overview
+
+### Create A custom Metric and Alarm 
+
+### Amazon Cloudwatch Logs
+
+### The unified CloudWatch Agent
+
+### AWS CloudTrail
+
+### Create A Trail In AWS CloudTrail
+
+### AWS EventBridge (Refresher)
+
+### Create EventBridge Rule for CloudTrail API Calls
+
+### Metrics and Analysis Tracking 
+
+
+## Security In the Cloud 
+
+### AWS Directory Service
+
+### Identity Providers and Federation 
+
+### IAM Identity Center in Action
+
+### Amazon Cognito
+
+
+### Encryption Primer 
+
+
+### AWS Key Management Service (KMS)
+
+### AWS CloudHSM 
+
+### AWS Certificate Manager 
+
+### SSL/TLS Certificate ACM
+
+### AWS Web Application Firewall
+
+### Amazon inspector 
+
+### Amazon Macie 
+
+### AWS Guard Duty
+
+### AWS Shield
+
+
+### Defense In Depth 
+
+
+
+
+## Migration and Transfer 
+
+### AWS Migration Tool Overview
+
+### AWS Application Discovery Service 
+
+
+### Database Migration Service (DMS)
+
+### AWS Application Migration Service (MGN)
+
+### AWS DataSync
+
+### AWS Snowball Family 
+
+### The 7Rs of Migration 
+
+
+## Web, Mobile, ML, Cost Management
+
+### AWS Amplify and AppSync
+
+### AWS Device Farm
+
+### AWS Machine Learning and AI Services
+
+### Process and Analyze Videos
+
+### AWS License Manager
+
+
+### AWS Compute Optimizer
+
+### AWS Budgets
+
+### AWS Cost Explorer
+
+### Cost Allocation Tags
+
+
+### AWS Cost Management Tools

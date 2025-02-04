@@ -3,7 +3,7 @@
 ## Launch Instances in two AZs
 
 1. Launch an instance using the Amazon Linux AMI in us-east-1a
-2. Launch another instnace using the Amazon Linux AMI in us-east-1b
+2. Launch another instance using the Amazon Linux AMI in us-east-1b
 
 ## Create and Attach an EBS Volume
 1. Create a 10GB gp2 volume in us-east-1a with a name tag of 'data-volume'
