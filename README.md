@@ -1487,3 +1487,32 @@
     - even if a user in the us has to go to `ap-southeast-2` since they are using the `AWS global network` the connection should be a lot faster and more reliable
 
 ## Block and File Storage ##
+
+
+### Block vs File vs Object Storage ###
+
+
+### Amazon EBS Deployment and Volume Types ###
+
+### Amazon EBS Copying, Sharing and Encryption ###
+
+
+### Amazon EBS Snapshots and DLM ###
+
+
+### EC2 Instance Store Volumes ###
+
+
+### Using RAID with EBS ###
+
+
+### Amazon Elastic File System (EFS) ###
+
+
+### Amazon FSx ###
+
+
+### AWS Storage Gateway ###
+
+
+### Architecture Patterns – Block and File Storage ###
