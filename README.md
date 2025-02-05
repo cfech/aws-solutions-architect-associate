@@ -2134,34 +2134,160 @@
 
 
 ## Migration and Transfer 
+- Many tools available to migrate into and out of AWS 
+- https://digitalcloud.training/aws-migration-services/
 
 ### AWS Migration Tool Overview
 ### AWS Application Discovery Service 
 ![text](./images/migration/tools-1.png)
-![text](./images/migration/tools-2.png)
+- Could be migrating into AWS from a corporate/on prem data center
+    - have dbs, servers, NAS
+- Connected with `Direct Connect`, `VPn` or the Internet
+- `Application Discovery Service`    
+    - collects data about on prem resources
+- `AWS Application Migration Service` - can migrate servers into `EC2`
+- `AWS Database Migration Service` - Migrates DBs into `RDS`
+- `AWS DataSync` - migrates into `EFS`
+- `AWS Migration Hub` - monitors migration that use AWS Services or Partner Tools
 
 
 ![text](./images/migration/tools-2.png)
+- `Application Discovery Service (ADS)` 
+    - can collect metadata such as hostnames, ip addresses, macs 
+    - also resources including CPU, network, memory etc...
+    - can use agent based discover for windows and linux OS
+    - can be saved to `S3` and queried with `Athena` or `QuickSite`
+- `Discovery Connector` - per center
+    - VmWare allows an agentless discovery
+    - Static Configs
+    - VM utilization metrics
+- `Discover Agent` - per server
+    - other OS and agents not using VMWare
+    - data forwarded to `ADS`
+        - Static Configs
+        - Time Series Performance
+        - Network I/O
+        - Running process
+    
 
 
 ### Database Migration Service (DMS)
 ![text](./images/migration/dms-1.png)
 ![text](./images/migration/dms-2.png)
 
+- USed for migrating databases
+    - Can use `Schema Conversion Tool` for heterogenous migrations
+        - Heterogenous = going from 1 db type to another
+        - Homogenous = going from same db type to same db type
+- Use Cases:
+    - cloud to cloud
+    - on prem to cloud
+    - Development and Test 
+    - Database Consolidation - consolidate multiple db into a single db
+    - Continuous Data Replication - use fro single source multi-target or multi-source single target
+
 ### AWS Application Migration Service (MGN)
 ![text](./images/migration/mgn-1.png)
 ![text](./images/migration/mgn-2.png)
 
+- Used for migrating servers
+    - The agent-based replication is recommended where possible
+        - supports continuous data protection
+    - Can provide and agentless snapshot based replication with `AWS MGN vCenter Client` 
+        - not recommended
+    - Provides automated incremental and schedule migrations
+    - can automate actions in conjunction with `Lambda`
+    - `EC2 Instances` are launched from launch templates
+- Used for **lift and shift** rehost of applications to AWS
+    - continuos block level replication
+        - cut over windows in minutes
+    - Old Service was the `Server Migration Service (SMS)` which used cut over windows in hours
+- Entire application group cna be migrated in a `migration wave`
+    - could also use `CloudFormation`
+- Can migrate both virtual and Physical Servers
+
 ### AWS DataSync
 ![text](./images/migration/datasync.png)
+
+- Used for mirgating data
+    - Can be shared file system or Object Bases Storage
+- `DataSync` has a software agent that connects to the software system
+    - can migrate to `S3` `FSX` or `EFS`
+        - Supports multiple `FSX` services
+    - Can transfer data between NFS, SMB, Hadoop, Sle manage object Storage, `Snowcone`, `S3` EFS and FSX
+    - all data is encrypted in transit
+    - supports schedule and automated transfers
+- `AWS Snowcone` - a DataSync Agent is installed on the snowcone
+    - Can transfer this data to AWS Services
+- `Amazon S3 On Outpost` allows this awa well
+
+
+
 
 ### AWS Snowball Family 
 ![text](./images/migration/snowball-1.png)
 ![text](./images/migration/snowball-2.png)
 
+- Physical, tamper resistant, encrypted devices
+    - 256 bit encryption
+        - manage with `AWS KMS` in tamper resistant `Trusted Platform Modules (TPM)`
+- Client software is installed on your computer
+- `Snowball` and `SnowMobile` are used for migrating large volumes of data to AWS
+    - 10s - 100s of terabytes, data needs to be transferred quickly but do not have alot of bandwidth
+    - Snowball 
+        - 80TB or 50TB - petabyte scale
+    - SnowMobile - 100 PB per snowmobile
+        - exabyte scale
+- `SnowBall Edge Compute Optimized`
+    - provides object storage and option GPU
+    - used for data collection, ML and processing, storage at the edge (factory, remote area etc...)
+- `SnowBall Edge Storage Optimized`
+    - provides block storage and `S3` compatible storage
+    - Uses for local storage and large scale data transfer
+- `Snowcone`
+    - Small device used for ege computing, storage and data transfer
+    - Can transfer data offline or online with `DataSync Agent`
+
+- Optimization of data transfer
+    1. Uses latest `snowball` client
+    2. Batch Small files together
+    3. Perform multiple copy operations at one time
+    4. Copy from multiple work stations
+    5. Transfer directions not files
+
+- Use Cases
+    - Cloud Data migration
+    - Content Distribution
+    - Tactical Edge Computing
+    - machine Learning on device
+    - Manufacturing - data collection and analysis in the factory
+    - Remote locations with simple data 
+        - pre-processing, tagging compression etc..
+
+
 ### The 7Rs of Migration 
 ![text](./images/migration/r-1.png)
 ![text](./images/migration/r-2.png)
+
+- Refactor - completely re-architect the application to a cloud-native serverless architecture 
+    - use cloud native architecture such as serverless functions or containers
+    - migrate databases to managed or severless NoSqlDB
+    - could be a decent amount of work
+- Replatform
+    - Move MySQl db to `RDS` and linux server to `Elastic BeanStalk`
+        - may need some code update, db update etc...
+        - can use `Database Migration Service` and `Schema Migration Tool`
+- Repurchase - uses a different solution
+- Rehost
+    - what AWS terms as lift and shift 
+        - move application from your host an `Ec2` host etc.. with `AWS Application Migration Service`
+            - need `AWS Replication Agent` installed on servers if not VMWare
+    - At some point we perform the final sync and cut over the instance
+- Relocate
+    - lift and shift the server
+    - no os or application changes
+- Retain - do nothing for now
+- Retire - done with application, get rid of it
 
 
 ## Web, Mobile, ML, Cost Management
