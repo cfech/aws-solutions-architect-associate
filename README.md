@@ -208,6 +208,7 @@
     - the monitoring tab shows various metrics that are sent to the `AWS Cloudwatch` service
     - By default metrics are sent to `CloudWatch` every 5 mins for free
     - `Detailed Monitoring` can be enabled for more frequent (every 1 minute) reporting but this will cost $$    
+        - `CloudWatch` detailed monitoring is enabled by default when creating launch configurations through the CLI.
 
 ### EC2 Placement Groups ###
 - A way to control how AWS deploys `EC2` and what `AZ` they are in
@@ -2038,36 +2039,154 @@
 ![text](./images/deployment/strategy-3.png)
 
 ## Monitoring, Auditing and Logging 
- 
+- https://digitalcloud.training/amazon-cloudwatch/
+- https://digitalcloud.training/aws-cloudtrail/
+
 ### Amazon CloudWatch Overview
 ![text](./images/monitoring/cw-1.png)
+- `CloudWatch` is a performance monitoring tool, can trigger alarms, log collection and automated actions
+    - Use Cases:
+        - Collect performance metrics from AWS and on prem systems
+        - Automate responses to operational changes
+        - Improve operational performance and resource optimization
+        - Derive actionable insights from logs
+        - Get operational visibility and insight
+    - Core Features
+        - `CloudWatch Metrics`
+            - services send time-ordered data points 
+            - Metrics sent every 5 mins by default for `Ec2`
+                - sends every 1 min with `Detailed EC2 Monitoring`
+                - `CloudWatch detailed` monitoring is enabled by default when creating launch configurations through the CLI.
+            - unified `CloudWatch Agent` sends system level metrics for `EC2` and on prem servers
+                - **include memory and disk usage (need the agent)**
+                - collects log files and metrics together
+            - can publish custom metrics from CLI or API
+                - 2 Resolutions
+                    - Standard : data to the minute
+                        - default resolution
+                    - High : data to 1 second
+        - `CloudWatch Alarms` 
+            - monitor metics and initiate actions
+            - example: auto scaling group responding to amount of load
+            - Types
+                - `Metric` - performs one or more actions based on the alarm
+                - `Composite` - uses a rule expression and takes into account multiple alarms
+            - States
+                - OK
+                - ALARM - outside threshold
+                - INSUFFICIENT_DATA - does not know enough
+        - `CloudWatch Logs`
+            - centralized collection of system application logs
+        - `CloudWatch Events`
+            - stream of system event describing changes to AWS resources
+                - can trigger actions 
+    
+
 ![text](./images/monitoring/cw-2.png)
 ![text](./images/monitoring/cw-3.png)
 
 ### Create A custom Metric and Alarm 
+- see [steps here](./aws-saa-code-main/amazon-cloudwatch/custom-cloudwatch-metrics.md)
+
 
 ### Amazon Cloudwatch Logs
 ![text](./images/monitoring/cw-logs.png)
+- gather application and system logs in `CloudWatch`
+- Defined expiration policies and `KMS` encryption
+- Send to: 
+    - `S3`
+    - `Kineses Data Streams`
+    - `Kineses Data FireHose`
+- `Unified Cloudwatch Agent` is what is actually used to send data 
+    - Need permissions to actually allow sending data to `CloudWatch`
+- Can export information to destinations like `ElasticSearch`
 
 ### The unified CloudWatch Agent
+- https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/metrics-collected-by-CloudWatch-agent.html
+
 ![text](./images/monitoring/cw-agent.png)
+- Collect internal System Level metics from `EC2` instances across OS
+    - Also on prem
+- Can retrieve custom metrics
+    - must use `StatsD` or `collectd` protocol
+- Collect logs from `EC2` instances or  on prem (Windows/Linux)
+- **Agent must be installed on the server**
+    - logs files are sent in real time so wont lose the metrics when instance is terminated
+    - Can be installed on:
+        - `EC2`
+        - On Prem
+        - Linux, Windows Server or MacOS
+            - Collects a ton of metrics for Linux and MacOS that is not in standard metrics
+                - Disk data, memory data, 
+            - Data from Windows Performance Monitor
+    
+
 
 ### AWS CloudTrail
 
 ![text](./images/monitoring/cloud-trail-1.png)
+- logs API Activity for auditing
+    - ie: when user or automated tasks take action
+- Retained for 90 days by default
+- `CloudTrail Trail` logs any events to `S3` for indefinite retention
+    - Can send notification via `SNS` when a log file irs published
+    - Can enabled log file integrity validation
+        - ensures logs have not been modified
+
+- `Trail` can be within 1 `Region` or all `Regions`
+- `CloudWatch Events` can be triggered based on API calls to `CloudTrail`
+- Events can be streamed to `CloudWatch` Logs
+
+
+
 ![text](./images/monitoring/cloud-trail-2.png)
+- Event Types:
+    - Management Events - provide information about manage operations that are performed on resources in your AWS Account
+        - Launch an `EC2`, create  a DB or `Lambda` etc...
+        - Stores who, when, what 
+    - Data Events - provide information about resource operations performed on or in a resource
+        - provides more detail
+    - Insight Events - identify and respond to unusual activity associated with write API calls continuous analyzing `CloudTrail` management
+
+
 
 ### Create A Trail In AWS CloudTrail
 
+
 ### AWS EventBridge (Refresher)
 ![text](./images/monitoring/eventbridge.png)
+- Used to be know as `CloudWatch Events`
+- Has been separated out into separate console
+- Data is sent from events in the sources to the `EventBridge Event Bus`
+    - Then rules determine what to do with the data being received
+    - decide which `target` receives the info
 
 ### Create EventBridge Rule for CloudTrail API Calls
 
 ### Metrics and Analysis Tracking 
 ![text](./images/monitoring/metrics-1.png)
+- Use X_Ray to visualize components of your application, identify performance bottlenecks and troubleshoot request that resulted in an error
+- Service send trace data and `X-Ray` processes the data to generate service mpa and searchable trace summaries
+
+- `AWS X-Ray` - used with applications running on `EC2` `ECS`, `Lambda` and `Elastic Beanstalk` 
+    - must integrate with `X-Ray SDK` with your application and install the `X-Ray Agent`
+        - Agent is a software application that gathers raw segment data and relays it to the `X-Ray` Service
+        - SDK captures metadata for request made to MySQL, Postgres and `DynamoDB`, as well as `SQS` and `SNS`
+
 ![text](./images/monitoring/metrics-2.png)
+- `AWS Managed Prometheus` - 
+    - Prometheus is an open-source monitoring system and time series database
+    - Uses PromQL to monitor and alert the performance of containerized workloads
+    - Scales the ingestion, storage, alerting and querying of operational metrics as workloads grow or shrink
+    - Integrated with `EKS`, `ECS` and `AWS Distro for OpenTelemetry`
 ![text](./images/monitoring/metrics-3.png)
+- Open source analytics monitoring solution for databases
+- Highly scalable, available and aws managed
+- Provides interactive data visualization for your monitoring and operation data
+- Visualize analyze and alarm on your metrics. logs and traces collection from multiple data sources
+- Integrates with `AWS SSO and SAML`
+- Can visualize the data from `X-Ray`
+
 
 ## Security In the Cloud 
 
