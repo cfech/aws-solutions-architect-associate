@@ -2980,35 +2980,136 @@ Resources:
 
 ### AWS Amplify and AppSync
 ![text](./images/mobile/amplify.png)
+- `Amplify` - tools and features for building full stack applications
+    - build wbe and mobile backends and web frontend UIs
+    - `AWS Amplify Studio` - a visual interface for building web and mobile apps
+        - uses visual interface to define a data model, user auth, and file storage
+        - easily add `AWS Services` not available within `Amplify Studio` using `AWS Cloud Development Kit`
+        - Connect mobile and web apps using Amplify libraries for iOS, android, Flutter, React Native and web
+    - `Amplify Hosting` is fully managed CI/CD and hosting service for fast, secure and reliable static and server side rendered apps
 ![text](./images/mobile/app-sync-1.png)
+- `AppSync` automatically scaled a GraphQL API execution engine up and down to meet API requests
+    - Fully managed service for GraphQL
+    - Allows you to subscribe over a websocket connection and bundle many AWS Servies in 1 communication channel
+        - ie: `Lambda`, `DynamoDB`, `Aurora`, Http etc...
+    - lets you specify which portions of you data or you data should be available
+    - Supports `AWS Lambda`, `DynamoDB` and `ElasticSearch`
+    - Server-side data caching capabilities reduce the need to directly access data sources
+    - Fully managed and eliminates the operational overhead of managing clusters
+
 ![text](./images/mobile/app-sync-2.png)
+- `Amplify` is used to build and host the WebStore application and created backend services
+- `AppSync` create a unified API layer for integrating microservices
 
 ### AWS Device Farm
 
+- application testing service used for web and mobile apps
+    - can automate testing
+- can see what application looks like across different device and browsers
+    - can also test access and interaction
+
 ### AWS Machine Learning and AI Services
 ![text](./images/mobile/ml-1.png)
+- Can use `Rekognition` to identify objects, perform facial analysis
+- Can be used in an event driven architecture
+- can add image andd video analysis to your application
+- identify objects, people, text, scenes and activities in images and videos
+- Process videos stored in Amazon `S3`
+- Publish completion status to `Amazon SNS topic`
 ![text](./images/mobile/ml-2.png)
+- `Amazon transcribe` - add speech to text capabilities to applications
+    - recorded speech can be converted to text before it can eb used 
+    - Uses a deep learning process call Automatic speech recognition to convert speech to text quickly and accurately
 ![text](./images/mobile/ml-3.png)
+- `Amazon translate` - neural machine translation service that delivers fast, high quality and affordable language translation
+    - uses deep learning models to deliver more accurate adn more natural sounding translation
+    - localize content such as website and application for your diverse users
+- `Amazon Comprehend` - NLP
+    - uses machine learning to uncover information in unstructured data
+    - can identify critical elements in data, including references to language people and places and text files can be categorized in relevant topics
+    - in real time, you can automatically and accurately detect customer sentiment in your content
 ![text](./images/mobile/ml-4.png)
+- `Amazon lex` - conversational AI for chatbots
+    - build conversational interfaces into any application using voice and text
+    - build bots to increase contact center productivity, automate simple tasks and drive operational efficiencies       
+- `Amazon DevOps Guru`
+    - cloud operations service for improve application operation performance and availability
+    - detect behaviors that deviate from normal operation pattern
+    - Benefits:
+        - Automatically detect operational issues
+        - Resolve issue with ML-powered insights
+        - Elastically scale operation analytics
+        - Uses ML to reduce alarm noise
 ![text](./images/mobile/ml-5.png)
+- `Amazon CodeGuru Security`
+    - detect, track and fix code security vulnerabilities anywhere in the development cycle using ML and automated reasoning
+    - Integrates with IDEs and CI/CD tools
+    - Automated bug tracing
+    - Assisted remediation through suggested code fixes
+    - Offers performance optimization recommendations
+    - Detects anomalies in application profiles
 
 ### Process and Analyze Videos
 ![text](./images/mobile/images.png)
+1. user uploads an image
+2. triggers `Lambda` which calls `Rekognition`
+3. `Rekognition` analyzes the image
+4. `Lambda` receives the answer and send the results to `DynamoDB`
 
 ### AWS License Manager
 ![text](./images/mobile/liscence-manager.png)
+- Used to manage licenses from software vendors
+    - Microsoft, oracle etc...
+- Centralize management of software licenses for AWS and on prem
+- Can track license usage including when licensed based on vCPUs, sockets or number of machines
+- Distribute activate and track software licenses across accounts and throughout organization
+- Enforce limits across multiple regions
 
 ### AWS Compute Optimizer
 ![text](./images/mobile/optimizer-1.png)
+- Recommends optimal AWS resources for your workloads to reduce cost and improve performance
+- Uses ML to analyze historical utilization metrics
+- Offer optimization guidance for:
+    - `EC2`
+    - `EBS`
+    - `Lambda`
+- Results can be viewed in console or CLI
 ![text](./images/mobile/optimizer-2.png)
 
 ### AWS Budgets
+- Allows you to set a custom budget and get notified when likely to reach or exceed the custom budget
+    - can get an email or text etc...
+    - integrated with `Cost Explorer`, `Q/Chatbot` and `Service Catalog`
 
 ### AWS Cost Explorer
+- Allows you to see a breakdown of what has been happening in the AWS account
+    - breaks down by service and by month, day, year etc...
+    - can filter by `Region`, instance type etc...
+    - supports cost categories and cost allocation tags
+    - can see who created the costs etc...
+
 
 ### Cost Allocation Tags
-
+- tag that can be used to organize resources and identify the cost
+- can itemize the reports by the tag
 
 ### AWS Cost Management Tools
 ![text](./images/mobile/management-tool-1.png)
+- `Costs Explorer` is a fre to that allows you to view and chart your costs
+- Cna view cost data for past 13 months and forecast how much you are likely to spend over the next 3 months
+- Can be used to discover patterns in how much you spend on AWS resources over time and to identify cost problem areas
+- `Cost explorer` can help you to identify service usage statistics such as:
+    - services used the most 
+    - metrics for which AZ has the most traffic
+    - which linked account is used the most
+
+- `AWS Cost and Usage Report (CUR)`
+    - publish AWS billing reports to `S3` bucket
+    - reports break down costs by: hour, day ,month, product, product resource, tag
+    - can update the report 3 times per dat
+    - Create, retrieve and delete your reports using AWS `CUR` API reference
+
 ![text](./images/mobile/management-tool-2.png)
+- AWS price list API
+    - query the prices of services
+    - Alerts va `Amazon SNS` when the price changes
