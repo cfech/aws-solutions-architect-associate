@@ -2013,6 +2013,15 @@ OR
 - Can build multi-layer applications
 - Builds event driven architecture
 
+- https://digitalcloud.training/aws-lambda/
+- https://digitalcloud.training/amazon-api-gateway/
+- https://digitalcloud.training/aws-application-integration/#amazon-simple-notification-service
+- https://digitalcloud.training/aws-application-integration/#amazon-simple-queue-service-amazon-sqs
+- https://digitalcloud.training/aws-application-integration/#amazon-simple-workflow-service-amazon-swf
+- https://digitalcloud.training/aws-application-integration/#amazon-mq
+- https://digitalcloud.training/aws-application-integration/#aws-step-functions
+- https://digitalcloud.training/amazon-cloudwatch/
+
 
 ### Serverless Services and Event Driven Architecture ###
 ![text](./images/serverless/serverless.png)

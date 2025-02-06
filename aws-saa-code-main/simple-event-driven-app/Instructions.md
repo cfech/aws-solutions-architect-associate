@@ -26,7 +26,7 @@
 9. Run the following AWS CLI Command for each command, making sure yo modify the queue URL and message body file names 
 
 ```bash
-aws sqs send-message --queue-url *QUEUE URL* --message-body file://message-body-1.json
+aws sqs send-message --queue-url https://sqs.us-east-1.amazonaws.com/156041403698/ProductVisitsDataQueue --message-body file://message-body-1.json
 ```
 
 10. In DynamoDB use the "Explore items" menu item and select the table. You should be able to see the product orders in the table
