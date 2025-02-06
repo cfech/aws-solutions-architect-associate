@@ -33,13 +33,13 @@
 
 ## IAM ###
 - https://digitalcloud.training/aws-iam/
-- Users: `IAM` users are individuals or applications that you create in AWS to grant them access to your AWS resources.
+- Users- `IAM` users are individuals or applications that you create in AWS to grant them access to your AWS resources.
     - long term
-- Groups: `IAM` groups are collections of `IAM` users that you can use to simplify permissions management by assigning permissions to the group instead of individual users.
-- Roles: `IAM` roles are sets of permissions that you can assign to AWS resources (like `EC2` instances) or federated users, allowing them to assume specific permissions without having long-term credentials.
+- Groups- `IAM` groups are collections of `IAM` users that you can use to simplify permissions management by assigning permissions to the group instead of individual users.
+- Roles- `IAM` roles are sets of permissions that you can assign to AWS resources (like `EC2` instances) or federated users, allowing them to assume specific permissions without having long-term credentials.
     - short term
     - have `Trust Relationships` which define who/what can assume this role
-- Policies: `IAM` policies are documents that define permissions for users, groups, or roles, specifying which actions they can perform on which resources.
+- Policies- `IAM` policies are documents that define permissions for users, groups, or roles, specifying which actions they can perform on which resources.
     - Policies are the rules.   
     - Users, groups, and roles are who the rules apply to.
 ```
@@ -359,7 +359,7 @@
 - Reserved instances
     - term is 1 or 3 years
     - standard and convertible RI
-        - standard: change `AZ`, instance size and network type with `ModifyReservedInstances` API
+        - standard- change `AZ`, instance size and network type with `ModifyReservedInstances` API
         - Convertible - can change all of standard and family, OS, tenancy, payment option with `ExchangeReservedInstances` API
     - can pay all up front, partial up front, no up front
     - can reserve capacity in a specific `AZ` but does not reserver capacity when specified by region
@@ -369,8 +369,8 @@
     - mitigates risk of being unable to get On-Demand Capacity
     - Does not require any term commitments and can be cancelled at any time 
 - Savings Plans 
-    - Compute Savings Plan:  1 or 3 year, hourly commitment to usage of `Fargate`, `Lamdba` and `EC2`, any region, family, size, tenancy and OS
-    - `EC2` Savings Plan:  or 3 year, hourly commitment to usage of `EC2`, within a selected region and instance family; any size tenancy and OS
+    - Compute Savings Plan-  1 or 3 year, hourly commitment to usage of `Fargate`, `Lamdba` and `EC2`, any region, family, size, tenancy and OS
+    - `EC2` Savings Plan-  or 3 year, hourly commitment to usage of `EC2`, within a selected region and instance family; any size tenancy and OS
 - Spot Instances 
 ![text](./images/ec2/spot-instances.png)
 - can ask for a spot block to get 1-6 hours of uninterrupted compute
@@ -389,10 +389,10 @@
     - eg: weather app
 - Generally want to keep the web server stateless by putting user data in cookies, caches and dbs
 
-- Scaling up: add more resources to the same server
+- Scaling up - add more resources to the same server
     - ie: changing the instance type of the `EC2`
     - SQL DB's are generally scaled up
-- Scaling out: add more servers of the same size
+- Scaling out - add more servers of the same size
     - ie: running more of the same instance
     - static web servers are generally scaled out 
 
@@ -413,7 +413,7 @@
 
 ![text](./images/lb/asg.png)
 - Need to setup and Auto Scaling Group
-- Launch Template: specifies the instance configuration
+- Launch Template - specifies the instance configuration
     - additionally health checks, vpc, subnets, purchase options etc...
 - Health checks:
     - `EC2` - comes with health checks checking if the machine is ok
@@ -445,7 +445,7 @@
 - High availability - minimal service interruption, no spof, uptime measured in 9's
     - Services to use aer ELB, Auto Scaling and Route 53
 - Fault Tolerance - no service interruption, specialized hardware, no downtime
-    - Services to use: fault tolerant NIC, disk mirroring (RAID), db replication and redundant power 
+    - Services to use - fault tolerant NIC, disk mirroring (RAID), db replication and redundant power 
 
 ![text](./images/lb/ha-1.png)
 ![text](./images/lb/ha-2.png)
@@ -453,12 +453,12 @@
 - When a server fails aws Auto Scaling will replace the server 
 - If an entire `AZ` fails we still have 2 web servers alive in a different `AZ`
 - The Load Balancer will make sure to route traffic appropriately
-- Durable: how often data is lost
-- Available: how often we can access the data 
+- Durable - how often data is lost
+- Available - how often we can access the data 
 
 ### Elastic Load Balancing ###
 - Provides high availability
-- Can target: `EC2`, ECS, IP Addresses, lambdas etc...
+- Can target - `EC2`, ECS, IP Addresses, lambdas etc...
 ![text](./images/lb/ha-2.png)
 - LBs listen to a target group
     - will keep track of instances with health checks
@@ -646,13 +646,13 @@
 - Preventative Guardrails
     - designed to prevent policy violations before they occur
     - ie: `SCP`
-    - example: disallow deletion og `Cloudtrail Logs` and `S3 Logging Buckets`
+    - Example - disallow deletion og `Cloudtrail Logs` and `S3 Logging Buckets`
 - Detective Guardrails
     - monitor and report policy violations for non-compliant actives that have already occurred
     -  help identify mis conduct 
     - Use `AWS Config` rules and Lambda Functions 
     - Continuos Evaluation
-    - Example: detect publicly accessible `S3 Bucket`
+    - Example - detect publicly accessible `S3 Bucket`
 
 ![text](./images/org/organization-vs-control-tower.png)
 
@@ -1218,16 +1218,16 @@
     -  there is a `.` at the root of the DNS hierarchy
 
 - There are multiple different types of DNS records
-    - A : Ip <-> Domain Name
-    - CNAME: Domain Name to another Domain Name
+    - A  - Ip <-> Domain Name
+    - CNAME - Domain Name to another Domain Name
         - `Route53` Charges for queries 
         - Cannot create a CNAM record at the top (zone appex) node of a DNS Namespace
             - only can create sub domains
-    - MX: returns mail servers
-    - TXT: associates text with the domain name
-    - SRV: server locator records
-    - NS: name server for the particular domain
-    - SOA: `Start of Authority` - stores important information about the domain
+    - MX - returns mail servers
+    - TXT - associates text with the domain name
+    - SRV - server locator records
+    - NS - name server for the particular domain
+    - SOA - `Start of Authority` - stores important information about the domain
 
 - Alias - A DNS record that maps a domain name to a hostname, such as an AWS resource. 
     - `Route53` specific
@@ -1778,9 +1778,9 @@
 
 
 ![text](./images/containers/cna.png)
-- Microservices architecture: structured collection of loosely coupled, independently deployable services
+- Microservices architecture - structured collection of loosely coupled, independently deployable services
     -  each runs its out process
-- Containers and Functions: code runs in docker containers or `Lambda` functions for isolation, elasticity and cost efficiency
+- Containers and Functions - code runs in docker containers or `Lambda` functions for isolation, elasticity and cost efficiency
 - Can utilize message queues, apis,. auth, payment processor etc...
 
 
@@ -1870,11 +1870,11 @@
 
 ![text](./images/containers/02-scaling.png)
 - Scaling policies:
-    - Target Tacking: increase or decrease the number of tasks that your service runs based on target value for a specific `CloudWatch` metric
-    - Step Scaling: increase or decrease the number of tasks that your service runs in response to `CloudWatch` Alarms
+    - Target Tacking - increase or decrease the number of tasks that your service runs based on target value for a specific `CloudWatch` metric
+    - Step Scaling - increase or decrease the number of tasks that your service runs in response to `CloudWatch` Alarms
         - Step Scaling is based on a set of scaling adjustments, know as step adjustments, 
         which vary based on the size of the alarm breach
-    - Scheduled Scaling: increase or decrease the number of tasks that your service runs based on the date and time
+    - Scheduled Scaling - increase or decrease the number of tasks that your service runs based on the date and time
 
 
 ![text](./images/containers/03-scaling.png)
@@ -2009,44 +2009,215 @@ OR
 
 
 ## Serverless Applications ##
+- No need to manage any infrastructure at all
+- Can build multi-layer applications
+- Builds event driven architecture
+
 
 ### Serverless Services and Event Driven Architecture ###
 ![text](./images/serverless/serverless.png)
+1. User uploads a file through a `static website` hosted in `S3`
+2. Lambda Serverless function processes the file
+    - sends the ouput to an `S3` bucket
+    - send a request to an `SQS` queue
+3. `Lambd` pulls from the queue and publishes message to `SNS Topic` and `DynamoDB Table` 
+    - Notification is sent uses `SNS` to email
+
+
+- No instances to manage
+- Do not need to provision hardware
+- No management of operating system
+- Capacity provisioning and patching is handled automatically
+- Provides automatic scaling and high availability
+- Can be very cheap
+    - only pay for the exact compute that you use
+    - pay more for more memory
+
 
 ### AWS Lambda ###
 ![text](./images/serverless/01-lambda.png)
+- Developer uploads some code to `Lambda`
+- Event occurs and triggers the `Lambda` function
+- Code is executed
+- Scales automatically
+- Only pay for the compute you consume
+- Benefits:
+    - no servers to manage
+    - continuous scaling
+    - millisecond billing
+    - integrates with almost all other AWS services
+
 ![text](./images/serverless/02-lambda.png)
+- Primary use cases:
+    - data processing, real time file or stream processing, serverless backends
+- Invoked by:
+    - Synchronous
+        - CLI, SDK, API Gateway
+        - Wait for the function to process the event and return a response
+        - error handling happens on the client side
+    - Asynchronous
+        - `S3`, `SNS`, `CloudWatch` 
+        - Event is queued for processing and response is returned immediately
+        - `Lambda` retries up to 3 times
+        - Processing must be idempotent
+        - `Lambda` is triggered
+    - Event Source Mapping:
+        - `SQS`, `kineses Data Streams`, `DynamoDB Streams`
+        - `Lambda` does the polling
+        - Records are processed in order 
+            - Except for `SQS` standard
 ![text](./images/serverless/03-lambda.png)
+- Additional functions are initialized up to the `burst` or `account limit`
+- If limit is exceeded throttling occurs with the error `429 Rate Exceeded` and a `TooManyRequestsException`
+- Quotas:
+    - 3000 - US West, East and Europe (Irland)
+    - 1000 - Asian Pacific (Tokyo), Europe (Frankfurk), US East (Ohio)
+    - 500 - other regions
+
+- Max invocation time for 15 mins
+    - is you have code that is required to run in a short period of time it is great
+    - default timeout is 3 seconds
+
+- Must ensure that the `Lambda` has the correct permissions to execute the required actions
+    - the default permissions include access to `cloudWatch` 
+- Can monitor invocations and runs tests from the console
 
 ### Application Integration Services Overview ###
 ![text](./images/serverless/services.png)
+- Application integrations services sit in between layers of your application
+- `SQS` - message queue - **decoupling**
+    - for building distributed/decouple applications
+- `SNS` - set up operate and send notifications from teh cloud
+    - send email notification when `CloudWatch` alarm is triggered
+- `Step Functions` - out of the box coordination of AWS Service components with visual workflow
+    - order processing workflow
+    - recommended over `SWS`
+- `Simple Workflow Service` - need to support external processes or specialized execution logic
+    - older version of step functions
+    - human enabled workflows like an order fulfillment system
+- `Amazon MQ` - queue based on Apache ActiveMQ or Rabbit MQ
+    - need a message queue thats supports industry standard protocols or migrating queues to AWS
+- `Amazon Kinesis` - collects, processes and analyzes data
+    - collect data from IOT for later processes
 
 
 ### Amazon SQS ###
 ![text](./images/serverless/01-sqs.png)
 ![text](./images/serverless/02-sqs.png)
+- Allows us to decouple the wen tier from the app tier to help alleviate overloading of the app tier
+- Standard queue offers Best Effort Ordering
+    - this not guaranteed order
+    - unlimited number of transactions per second
+    - At least once delivery
+- FIFO - first in first out
+    - 300 messages per second if not batched
+    - Exactly once delivery
+    - requires a `Message Group ID` and `Messages Deduplication ID`
+    - `Message Group ID`
+        - tag that specifies that a message belongs to a specific message group 
+        - Messages that belong to the same group are guaranteed to be processed in a FIFO manner
+    - `Message Deduplication ID` - token used for deduplication of messages within the deduplication interval
+
 ![text](./images/serverless/03-sqs.png)
+- `Dead Letter Queue` - standard or FIFO
+    - main task is handling message failures
+    - sets aside a copy of the message into another queue
+    - can analyze or process that message as required
+    - no a queue type, just an extra Queue
+    - Can specify it in the settings    
+
+
 ![text](./images/serverless/04-sqs.png)
 ![text](./images/serverless/05-sqs.png)
+- `Delay Queue` - allows us to delay the visibility of the message for a certain period of time
+    - becomes visible after the timeout
+- Long Polling - retrieves messages from `SQS Queues` - waits for messages to arrive
+    - can lower costs since we have to pay for API calls
+        - reduce number of API operations from our consumer
+    - can be enabled at the queue level or API level with the `WaitTimeSeconds` setting
+    - 0 - 20 seconds
+- Short Polling -  returns immediately even if the queue is empty
+
+
 
 ### Amazon SNS
 ![text](./images/serverless/01-sns.png)
+- All about sending notifications
+- pub/sub
+- many Subscribers listen for notifications
+1. Event Producer send one message to SNS Topic
+2. Each subscriber will get the message
+
+- Highly available, durable, secure, fully managed
+- Provides `Topic` for high throughput, push based, many to many messaging
+    - **PUSH BASED**
+- Can fan out messages to a large number of endpoints
+    - `SQS`
+    - `AWS Lambda`  
+    - HTTP/S Webhooks
+    - Mobile push
+    - SMS
+    - Email
+
 ![text](./images/serverless/02-sns.png)
+- multiple recipients can be group in `topics`
+    - a topic i an `access point` for allow recipients to subscribe
+- one topic can support deliveries to multiple endpoint types
+- Simple APIs and easy integrations with web applications
+- Flexible Message Delivery over multiple transport protocols
+
+- Fan out - comes up in exam questions
+    - can subscribe one or more `SQS` queues to an amazon `SNS` tropic
+    - `SQS` manages the subscription and any necessary permissions
+    - When you publish a message to a topic, `SNS` sends the message to every subscribed queue
 
 
 ### Simple Event Driven APP ###
 ![text](./images/serverless/event-driven.png)
+- Add a message to a queue in the CLI
+- `SQS` triggers `Lambda`
+- Item is written to `DynamoDB Table` 
+- `Cloudwatch logs ` tracks this
+
+
 
 ### AWS Step Functions
 
 ![text](./images/serverless/step-functions.png)
+- Used to build distributed applications as a series of steps in a visual workflow
+- Can quickly build and run state machines to executed the steps of your application
+1. define the steps of the workflow using `JSON Based Amazon States Language`
+    - can see what the looks like in the console
+2. Start an execution to visualize and verify the steps of your application are operating as intended
+    - operates and scales the steps of your application and underlying compute
+
 
 ### Create a State Machine ###
 
 
 ### Amazon EventBridge ###
 ![text](./images/serverless/01-event-bridge.png)
+- Serverless event bus
+    - can react to state changes in resources
+- Used to be known as `CloudWatch Events`
+- Sources publish events to the `EventBridge Bus`, some rules are applied and data is forwarded to targets
+- Example:
+    1. `EC2` instance is terminated
+    2. `EventBridge Event Bus` gets the event
+    3. A `rule` is processed
+    4. `Rule` is sent to a target
+    5. `SNS` sends an email
+
+
 ![text](./images/serverless/02-event-bridge.png)
+- Define an event by creating an `Even Pattern`
+
+- Example2:
+    1. `CloudTrail` is a source
+    2. `S3:PutBucket` api is used
+    3. `EventBridge` receives this event
+    4. `Rule` is applied
+    5. `SNS` Sends notification
 
 ### Create Event Bus and Rule
 ![text](./images/serverless/event-bus.png)
@@ -2054,9 +2225,52 @@ OR
 
 ### Amazon API Gateway ###
 ![text](./images/serverless/01-gateway.png)
+- Used to create APIs to expose AWS services over an API
+    - example: `EC2s`, `Lambda`, external services
+- Supports Restful APIs and websocket APIs
+- Can import Swagger/OpenAPI 3.0
+- Can validate or modify request to forward it correctly
+
+- Deployment types
+ - `Edge-Optimized` - sits behind `CloudFront`
+    - reduced latency for requests around th world
+    - Uses `CloudFront Edge Locations` 
+ - `Regional Endpoint` - reduced latency for requests from the same region
+    - can include a CDN and Firewall
+ - `Private Endpoint` - securely expose rest APIs only to other sevices within your `VPC` or connect via `direct connect`
+
+
+
 ![text](./images/serverless/02-gateway.png)
+- Web APP connects to the Publish API
+    - configure method requests and map them to the integrations
+    - map the status codes, headers and payload received from the backend 
+- For `Lambda` you cna have 
+    - `Lambda` proxy integration
+    - Custom integration
+        - passes the request straight though
+-  HTTP Endpoint
+    - Proxy
+    - Custom
+- AWS Service action , only non proxy
+
 ![text](./images/serverless/03-gateway.png)
+- Can add caching to api calls by provisioning the `Amazon API Gateway` cache
+    - must specify its size
+- Allows you to cache the endpoints response
+- Can reduce number of calls to the backend and improve latency of requests to the API
+
+- Throttling
+    - sets limits on a steady-state rate and burst of requests submissions against all APIs in your account
+        - Default limit in the steady state is 10,000 req/s
+        - Max concurrent requests is 5000 across all APIs within an account
+        - If you go over these limits you may get a 429
+    - Upon catching exceptions the client and resubmit
 ![text](./images/serverless/04-gateway.png)
+- Users connect to a specific api public endpoint with the API Key that is configured in the usage plan
+    - Basic and premium users can have different limits, can determine who is who by the API Key
+- Can also configure perm-method throttling limits
+
 
 
 
@@ -2262,12 +2476,12 @@ OR
                 - collects log files and metrics together
             - can publish custom metrics from CLI or API
                 - 2 Resolutions
-                    - Standard : data to the minute
+                    - Standard  - data to the minute
                         - default resolution
-                    - High : data to 1 second
+                    - High  - data to 1 second
         - `CloudWatch Alarms` 
             - monitor metics and initiate actions
-            - example: auto scaling group responding to amount of load
+            - example - auto scaling group responding to amount of load
             - Types
                 - `Metric` - performs one or more actions based on the alarm
                 - `Composite` - uses a rule expression and takes into account multiple alarms
