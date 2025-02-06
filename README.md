@@ -2412,45 +2412,165 @@ OR
 
 
 ## Deployment And Management ##
+- https://digitalcloud.training/aws-cloudformation/
+- https://digitalcloud.training/aws-elastic-beanstalk/
+- https://digitalcloud.training/aws-config/
+- https://digitalcloud.training/aws-resource-access-manager/
+- https://digitalcloud.training/aws-systems-manager/
+- https://digitalcloud.training/aws-opsworks/
 
 ### Infrastructure as Code With AWS CloudFormation ###
 ![text](./images/deployment/cloudformation.png)
+- `AWS Cloudformation` - deploy infrastructure as code in a template file
+    - Can be formatted in JSON or yml
+    - `Cloudformation` will build the infra on AWS as defined in the template file
+    - Good for reusability and consistency
+- Components:
+    - `Templates` - JSON or Yaml text file with instructions
+    - `Stacks` - entire environment described by the template
+        - if we delete the stack CloudFormation will delete all these resources for us
+    - `StackSets` - extends `Stack` so they you can create, update and delete stacks across accounts or `regions`
+    - `ChangeSets` - summary of proposed changes to the `stack` that will allow you to see how those changes might impact your existing resources before implementing them
 
 
 ### Creating and Updating Stacks 
+- can upload a file and watch the events/resource tab to see app resources being created
 
+- `!Ref` is a reference intrinsic function to dynamic select a resource
+```yml
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Create an EC2 instance with a security group for SSH access
+Resources:
+  InstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable SSH access
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0440d3b780d96b29d
+      InstanceType: t2.micro
+      SecurityGroups:
+        - !Ref InstanceSecurityGroup
+```
+- here we are referencing InstanceSecurityGroup
 
 ### Create Nested Stack using AWS CLI 
 ![text](./images/deployment/nested-stacks.png)
+- can nest stacks inside of a nested stack to created a group of resources
 
 ### Platform as a Service with AWS Elastic Beanstalk
 ![text](./images/deployment/beanstalk-1.png)
+- A platform as a service (PaaS)
+- Everything is launched and managed by `Elastic BeanStalk`
+    - creates an environment
+- can upload the source code in a war/zip file
+
 ![text](./images/deployment/beanstalk-2.png)
+- Supports many applications platforms
+- Uses core AWS Services including `EC2`, `ECS`, `Auto Scaling`, `Load Balancing`
+- Provides a UI to monitor and manage the health
+- Managed platform updates deploy the latest version of software and patches
 ![text](./images/deployment/beanstalk-3.png)
+- Layers:
+    - Application
+        - `environments`, env config, app versions
+            - app version that have been deployed
+            - resources are configured and provisioned by `BeanStalk`
+            - comprised of all resources created by `BeanStalk`
+        - can have multiple app version in an app
+            - a specific reference to a section of code
+            - typically will point to an `S3` bucket
+    
+
+
 ![text](./images/deployment/beanstalk-4.png)
+- `Web Servers` are standard apps listening to HTTP requests
+- `Workers` - specialized applications that have a background processing task that listens for messages on an `Amazon SQS queue`
+    - used for long running tasks
+
 
 ### Create an Elastic Beanstalk Service
 
 ### SSM Parameter Store
 ![text](./images/deployment/param-store.png)
+- Provides secure, hierarchical storage for configuration data and secrets
+- Highly scalable, available and durable 
+- Store data such as passwords, db strings, license codes
+- Store values in plain text or encrypted
+- Reference values by using unique name that specified when creating the param
+- **No native rotation of keys**
+    - This is supported in `Secrets Manager`
+    - Would have to do this explicitly with an external service like `Lambda`
+- Free for standard, charged for advanced and higher throughput
+- Allows hierarchical keys
 
 ### AWS Config
 ![text](./images/deployment/config-1.png)
+- Viewing and managing config or AWS resources
+    - often in compliance scenarios
+
+- Evaluate your AWS Resource configurations for desired settings
+- Get a snapshot of the current configurations of resource associated with AWS account
+- Retrieve configs or resources in your account
+- Retrieve historical configs of one or more resources
+- Receive notification whenever a resource is created, modified or deleted
+- View relationships between resources
+
+
+
+- Example:
+    1. `Config` evulates the config against desired configs
+    2. changes occur and information is sent to `Aws Config`
+        - recorded info in `S3`
+    3. Send notification via `SNS Topic`
+    4. Alert via cloudwatch events (now `EventBridge`)
+    5. Can uses `Systems Manager` to automatically remediate unwanted state
+
+
 ![text](./images/deployment/config-2.png)
+- Example AWS Managed Rules that can be found in config
 
 
 ### SSM Automation and Config Rules 
 
 ### AWS Secrets Manager
 ![text](./images/deployment/secrets-manager.png)
+- Stores and rotates secrets safely without need for code deployments
+- Allows for automatic rotation of the secrets
+- Built in for:
+    - `Amazon RDS` - 
+    - `Amazon RedShift` - 
+    - `Amazon Document DB` -
+    - `Amazon ECS`
+    - Other services you will need to rotate with  a `Lambda` function
+- Charges per secret 
+- String or binary, always encrypted
+- 64kb
 
 ### Ops Works
 ![text](./images/deployment/ops-works.png)
-
+- AWS OpsWorks is a configuration management service that provides managed instances of these two open-source tools (Chef and Puppet).
 
 ### AWS Resource Manager 
 - https://docs.aws.amazon.com/ram/latest/userguide/shareable.html
 ![text](./images/deployment/ram.png)
+
+- Shares resources within or across accounts, like subnets, dbs and resource groups :
+    - Across accounts
+    - Within `AWS Organizations`
+    - `IAM Roles` and `IAM users`
+- Can be created with:
+    - `RAM` console or APIs
+    - AWS CLI
+    - AWS SDK
+
+
 
 ### Share a Subnet Across Accounts
 
@@ -2459,7 +2579,29 @@ OR
 
 ![text](./images/deployment/strategy-1.png)
 ![text](./images/deployment/strategy-2.png)
+- Recovery Point Objective (RPO)
+    - measurement of the amount of data that can be acceptably lost
+    - measured in seconds, minutes or hours
+    - Examples:
+        - Milliseconds to Seconds require  Synchronous Replication
+        - Seconds to Minutes require Asynchronous Replication
+        - Minutes to hours require Snapshots and cloud backups
+        - Hours to Days require offsite, traditional and tape backups
+- Recovery Time Objective
+    - How much time it takes to restore from disaster
+    - measured in seconds, minutes or hours
+    - Examples:
+        - Milliseconds to Seconds require Fault Tolerance
+        - Seconds to Minutes require high availability, load balancing and auto scaling
+        - Minutes to hours require cross-site recovery(cloud), automated recovery
+        - Hours to Days require Cross site recovery (cloud/on-prem), manual recovery
+
 ![text](./images/deployment/strategy-3.png)
+- Strategies
+    - `Backup and Restore` - low priority, provision/restore after event, $
+    - `Pilot Light` - data replicated, services are idle/off, resources activated after the event, $$
+    - `Warm Standby` - Minimum resources always running, business critical workloads, scale up after, $$$
+    - `Multi-site active/active ` - Zero downtime, nero zero data loss, mission critical workloads, $$$$
 
 ## Monitoring, Auditing and Logging 
 - https://digitalcloud.training/amazon-cloudwatch/
@@ -2503,6 +2645,7 @@ OR
         - `CloudWatch Events`
             - stream of system event describing changes to AWS resources
                 - can trigger actions 
+            - now `EventBridge`
     
 
 ![text](./images/monitoring/cw-2.png)
@@ -2558,6 +2701,7 @@ OR
 
 - `Trail` can be within 1 `Region` or all `Regions`
 - `CloudWatch Events` can be triggered based on API calls to `CloudTrail`
+    - now `EventBridge`
 - Events can be streamed to `CloudWatch` Logs
 
 
