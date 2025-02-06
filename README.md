@@ -1760,52 +1760,252 @@
 
 
 ## Docker Containers and ECS ##
+- https://digitalcloud.training/amazon-ecs-and-eks/
 
 ### Docker Containers and MicroServices ###
 ![text](./images/containers/virtualization.png)
+- VMs ned an operating system which requires significant computational overhead
+
 ![text](./images/containers/docker.png)
+
+- Containers on on a container engine anc can start very quick
+    - they are resource efficient
+    - container all code, settings and dependencies to run the application
+    - isolated from other container
+- Docker Hub os a cloud based registry service for sharing container images
+- Containers are lightweight because they share the systems kerne;
+- ideal for microservices and cloud native applications
+
+
 ![text](./images/containers/cna.png)
+- Microservices architecture: structured collection of loosely coupled, independently deployable services
+    -  each runs its out process
+- Containers and Functions: code runs in docker containers or `Lambda` functions for isolation, elasticity and cost efficiency
+- Can utilize message queues, apis,. auth, payment processor etc...
+
 
 ### Amazon Elastic Container Services (ECS) ###
 ![text](./images/containers/01-ecs-components.png)
+- AWS Service to run Docker Container
+- Must deploy and `ECS CLuster`
+    - logical grouping of `tasks` or `services`
+    - inside of a cluster you launch a `task`
+    - `tasks` are created from `task definition`
+    - `services` are used to maintain desired count of `tasks`
+    - images can be stored in `Amazon Elastic Container Registry (ECR)`
+- `ECS Container Instance` - the `EC2` that is running the container and have teh `ECS Container Agent`
+    - this will join the instances the to `cluster`
+- Serverless containers can run on `AWS ECS Fargate` with no overhead
+- Fully managed container orchestration
+- Docker Support
+- Windows Container Support
+- Integration with Load Balancer
+    - defined as part of the service
+- `Amazon ECS Anywhere` - enables ECS Control plane to manage on prem implementations
 ![text](./images/containers/02-ecs-features.png)
+- `Cluster` - Logical Grouping of `tasks` or `services`
+- `Container Instance` - `EC2` instance running the container agent
+- `Task Definition` - blueprint for how the docker container should launch
+- `Task` - a running container using settings from the `Task Definition`
+- `Image` - docker image referenced in the `Task Definition`
+- `Service` - defines long running `Tasks` 
+    - can control `task` count with Auto Scaling and attach to a Load Balancer
 ![text](./images/containers/03-ecs-images.png)
+- Containers are built from images defined in a docker file
+    - Only Docker is supported on ECS
+    - Images are stored in a registry such as DockerHub or `ECR`
+        - `ECR` managed Docker registry
+        - Supports private docker repositories with resource based permissions using `AWS IAM` in order to access repositories and images
+        - Can use Docker CLI to push, pull and manage images
 ![text](./images/containers/04-ecs-task-definition.png)
+- Required to run docker containers in `Amazon ECS`
+- A text file in jSON format
+    - describes 1 or more containers and max of 10
+- Use docker images to launch container
 ![text](./images/containers/05-ecs-fargate.png)
+- Managed `ECS` service
+- Automatically provisions resources
+- Provisions and manages compute
+- Charged fro running `tasks`
+- `EFS` Integration only
+- Managed cluster optimization
+- Limited control
 ![text](./images/containers/06-ecs-iam-roles.png)
+- `ECS TASK` `IAM role` provides permissions the the container
+- Container IInstance IAM role provides permissions to the host
+- With Fargate the container instance role is replaced with the `Task Execution Role`
 
 ### Amazon ECS IAM Roles ###
 ![text](./images/containers/01-iam-roles.png)
+- `Amazon ECS Container Instance IAM Role` - used by `EC2` and external instances to provide permissions to the container agent to call AWS APIs
+- `Task IAM Role` - permissions granted in th IAM role are assumed by the containers running the task
+- `Amazon ECS task execution IAM Role` - grants the `ECS` container and `Fargate` agents permissions to make AWS API calls
+- `Amazon ECS infrastructure IAM role` - allows amazon to manage infrastructure resources 
+- `ECS Anywhere IAM role` - when running on prem servers
+- `Amazon ECS CodeDeploy IAM Role` - when code deploy is performing green/blue deployments
+- `Amazon ECS EventBridge IAM Role` - `EventBridge` need permissions to use schedule tasks, rules and targets
+
 ![text](./images/containers/02-iam-roles.png)
+- The container instance `IAM role` provides permissions to the host
+- The `ECS Task` `IAM ROle` provided permissions to the container
+- In `Fargate` IAM Task Roles cna de applied
 ![text](./images/containers/03-iam-roles.png)
+- A container can only retrieve credentials from the IAM role that is defined in the `task definition` to which it belongs
+- A container never has access to credentials that are intended for another container that belongs to another task
+- When using `EC2` instances, `tasks` are not prevented from accessing credentials supplied to `IAM Instance role`
 
 ### Scaling Amazon ECS ###
 ![text](./images/containers/01-scaling.png)
+- Two Types of Scaling
+    1. service auto scaling
+        - automatically adjusts the desired task count up or down using `Application Auto Scaling Service`
+        - Supports target tracking, step and scheduled auto scaling policies
+        - Ex: Metric reports CPU > 8-%
+            - `CloudWatch` notifies `Application Auto Scaling`
+            - `ECS` launched additional `task`
+    2. cluster auto scaling
+        - uses `Capacity Provider` to scale the number of `ECS Cluster` instances using `EC2 Auto Scaling`
+        
+
+
 ![text](./images/containers/02-scaling.png)
+- Scaling policies:
+    - Target Tacking: increase or decrease the number of tasks that your service runs based on target value for a specific `CloudWatch` metric
+    - Step Scaling: increase or decrease the number of tasks that your service runs in response to `CloudWatch` Alarms
+        - Step Scaling is based on a set of scaling adjustments, know as step adjustments, 
+        which vary based on the size of the alarm breach
+    - Scheduled Scaling: increase or decrease the number of tasks that your service runs based on the date and time
+
+
 ![text](./images/containers/03-scaling.png)
+- Cluster Auto Scaling:
+    - `ASG` is linked to `ECS` using `Capacity Provider`
+        - `Capacity Provider Reservation` metric measures the total percentage of cluster resources needed be all `ECS` workloads in the cluster
+        - Managed Sacling - with an automatically created scaling policy on the `ASG`
+        - Managed instance termination protection - enabled container aware termination of instance in the `ASG` when scale-in happens
+    - CloudWatch notifies `ASG`
+    - AWS Launches additional container instance
+
+
 
 
 ### Amazon ECS With ALB ###
 ![text](./images/containers/ecs-alb.png)
+- Dynamic port is allocated on the host
+- Each `task` is running on web service port 80
+    - however we can only have 1 application running on port 80
+    - must use the host port
+- All connections to web services coming into HTTP listener 
+- If applications running in private subnet we need a `NAT Gateway` in a public subnet and an entry in the route table for the private subnet
+- The `Application Load Balancer` is container aware 
+    - knows about the host port
 
 ### Launch Docker Containers on AWS Fargate ###
+1. create a cluster
+    - this will cause `cloudformation` to spin up a stack
+2. Create a `task definition`
+    - must assign a task role if you want the container to make API requests
+    - Task Execution role - used by the container agent to make API requests
+    - Chose image, ports and resources
+    - Can configured storage, logs etc...
+3a. Click run new `task` in the `cluster`
+    - use the `task definition` just created 
+    - will assign subnets, security groups etc..
+OR 
+3b.  Could create a `service`
+    - adds load balancing and auto scaling to the `task definition`
+    - will spin up the required amount of tasks
 
 ### Amazon Elastic Kubernetes Service (EKS) ###
 
 ![text](./images/containers/01-eks.png)
+- Managed Kubernetes environment running in the cloud or on prem
+- Used when you need to **standardize** container orchestration across multiple environments 
+- Features:
+    - Hybrid deployment - manage Kubernetes cluster across AWS and on prem
+    - Batch Processing - run sequential or parallel batch workloads
+    - Machine Learning - use KubeFlow with EKS to model your ML workflows and efficiently run distributed training jobs using the latest `EC2` GPU powered instances such as `Inferentia`
+    - Web Applications -  scalable and available web applications across multiple `AZ`
+
+- Supports Load Balancing with `ALB`, `NLB` and `CLB`
+- Runs on `EC2`, `Fargate` or `AWS Outposts`
+- Group of containers are kno as `Pods`
+- Live in `EKS Cluster`
+
 ![text](./images/containers/02-eks.png)
+- `Vertical Pod Autoscaler` - adjust the CPU and memory of pods to "right size" the applications
+- `Horizontal Pod AutoScaler` - automatically scaled the number of pods in a deployment, replication controller or replica set based on resources CPU Utilization
+- Supports 2 autoscaling products
+    - Kubernetes Cluster Autoscaler
+        - uses AWS `ASG`
+    - Karpeneter open source autoscaling project
+        - works directly with `EC2 Fleet`
+
+- Load Balancing
+    - support `NLB` and `ALB`
+    - `AWS Load Balancer Controller` manages `AWS Elastic Load Balancers` for the cluster
+        - Install the `Load Balancer Controller` using Helm V3 or later by applying a Kubernetes Manifest
+        - Controller provisions the `ALB` when your create a Kubernetes Ingress
+        - `NLB` when you create a Kubernetes service with type Load Balancer
+    = 
+
+
 ![text](./images/containers/03-eks.png)
+- `EKS Distro` is a distributions of Kubernetes with the same dependencies as `EKS`
+- Allows you to manually run Kubernetes anywhere
+- Includes binaries and containers of open-source Kubernetes etcd, networking and storage plugins
+- Can securely access `EKS Distro` releases on GitHub or within AWS vias `S3` and `ECR`
+- Alleviates the need t track updates, determine compatibility and standardize on common Kubernetes version across distributed teams
+- You can create `EKS Distro` clusters in AWS on `EC2` or on prem
+- 
 
 ### Amazon Elastic Container Registry (ECR) ###
 ![text](./images/containers/01-ecr.png)
-![text](./images/containers/02-ecr.png)
-![text](./images/containers/03-ecr.png)
-![text](./images/containers/04-ecr.png)
-![text](./images/containers/05-ecr.png)
+- Fully Managed Container Registry
+- Integrated with `ECS` and `EKS`
+- Supports Open Container Initiative (OCI) and Docker Registry HTTP API
+- Can user Docker Cli
+- Can be accessed from Docker env in the cloud, on prem, or on your machine
 
+- Container images and artifacts are stored in `S3`
+- Can use namespaces to organize repos
+    - Public repos allow everyone to access images
+- Access control applies to private repos
+    - `IAM Access control` - set of policies to define access to container images in private repos
+    - `Resourced Based Policies` - access control down to the individual API Actions
+
+![text](./images/containers/03-ecr.png)
+- `Registry` - provided to each AWS Account, can create 1+ repos in a registry
+- `Authorization token` - must authenticate with ECR as AWS user before can push and pull images
+- `Repository` - contains images
+- `Repository policy` - control access to your repos and images within them
+- `Image` - push and pull container images to repo
+
+- `LifeCyle Policies` - manage the lifecycle of the images in your repo
+- `Image Scanning` - identify vulnerabilities in images
+- `Cross Region and cross account replication` - replication of images 
+- `Pull through cache rules` - cache repos in remote public registries in your private `ECR`
+![text](./images/containers/04-ecr.png)
+- Must have specific IAM permissions to push an image to the repo
+
+![text](./images/containers/05-ecr.png)
+1. authenticate
+2. tag image
+3. push image with docker cli
 
 ### AWS App Runner ###
 ![text](./images/containers/app-runner.png)
+- fully manage service for deploying `containerized` web apps and apis
+- PaaS solution with components managed , just bring code
+    - could be from `ECR` or github etc...
+- offers
+    - Auto Scaling 
+    - LB
+    - Health Check 
+    - Network
+    - Observability
+- Limited control
+
 
 
 ## Serverless Applications ##
