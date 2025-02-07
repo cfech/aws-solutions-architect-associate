@@ -2756,65 +2756,335 @@ Resources:
 
 
 ## Security In the Cloud 
+- https://digitalcloud.training/aws-iam/
+- https://digitalcloud.training/amazon-cognito/
+- https://digitalcloud.training/aws-directory-services/
+- https://digitalcloud.training/aws-kms/
+- https://digitalcloud.training/aws-cloudhsm/
+- https://digitalcloud.training/aws-waf-shield/
 
 ### AWS Directory Service
 ![text](./images/security/ad-1.png)
+- Provides a few different options
+- `AWS Managed Microsoft AD` running on Windows Server
+    - can have a pair of highly available Windows Domain Controllers
+        - one or two wat trust relationship
+    - can connect `EC2` linux and Windows to the domain controller
+    - Can connect Azure and Office 365 for federated identities
+    - example apps and services that support auth
+    - Can apply group policies, you SSO and enable MFA using radius
+    - Best choice if you have more than 5000 users or need to connect another domain using a trust relationship
+    - Can perform schema extensions
+    - Can setup trust relationships with On Prem AD
+        - on prem user and group can access resources in either domain using SSO
+        - requires a vpn or `direct connect`
+    - Can be use as a standalone AD in the AWS cloud
 ![text](./images/security/ad-2.png)
+- AD Connector 
+    - when you have an existing AD on a corporate env
+        - self managed
+    - Connect over `VPN` or Direct `Connect`
+    - Sign into AWS Applications with AD credential 
+        - federated AWS sign in
+        - Maps credentials to IAM roles
+    - Can seamlessly join Windows `EC2` instances to an on prem AD Domain
+    - Redirects requests to on prem AD 
+    - Small - 500 users
+    - Large - 5000 users
+    - Allows login to Management Console with local AD credentials
+
+
 ![text](./images/security/ad-3.png)
+- Inexpensive AD compatible service with common directory features
+- Stand alone fully managed, directory in AWS Cloud
+- Simple AD is generally the least expensive option
+- Best choice for less than 5000 users and do not need advanced AD  features
+- Features include:
+    - Managed user accounts/groups
+    - apply group policy
+    - Kerberos Based - SSO
+    - Supports joining Linux or Windows `EC2` instances
+
 
 ### Identity Providers and Federation 
 ![text](./images/security/id-1.png)
+- AD is an LDAP identity Store
+- Active Directory Federation Services is an `Identity Provider`
+    - idp authenticates the users
+    - idp sends client SAML Assertion
+    - APP Calls `sts:AssumeRoleWithSAML` 
+    - `AWS Security Token Service (STS)` returns temporary credentials
+    - User is not allowed to use credentials to access `DynamoDB`
+- Open ID Connect (OIDC)
+    - Social Identity Providers 
+        - apple, google, facebook etc...
+    - App calls `sts:AssumeRoleWithWebIdentity` 
+    - `AWS Security Token Service (STS)` returns temporary credentials
+    - User is not allowed to use credentials to access `DynamoDB`
+    - AWS recommend you use `AWS Cognito` rather than `Web ID Federation`
+
+
 ![text](./images/security/id-2.png)
+- `IAM Identity Center` - sources can be Identity Center directory, Active Directory, and standard providers using SAML 2.0
+    - Successor to `AWS SSO`
+    - Enables centralized permissions management and SSO
+    - Built in SSO with many common applications
+    - Integration with `Organizations` 
+
+- `AWS Cognito`
+    - Used with web and mobile app configurations 
+    - allows Social Identity Providers
+    - The app calls the `Cognito User Pool` with Social ID provider ifo
+    - A Token is generated with security credentials and returns a JWT
+    - App calls `Cognito Identity pool` which calls the `AWS Secure Token Service` `sts:AssumeRoleWithWebIdentity` 
+    - Token is exchanged for temporary security credentials
+    - User is not allowed to use credentials to access `DynamoDB`
 
 ### IAM Identity Center in Action
 
 ### Amazon Cognito
 ![text](./images/security/cognito-1.png)
+- Used for sign in/up functionality to web and mobile applications
+- `Cognito User Pool` - directory for managing sign in and sign up for mobile applications
+    - where Identities are stored or we federate to a identity provider
+- Acts as an Identity broker between the Identity Provider and AWS
+    - Uses JWT to pass around to confirm authentication/authorization
+        - `Lambda` authorizer accepts and processes the JWT
+
+
+- `Cognito Identity pool` - are used to obtain temporary limited privilege credentials for AWS Services
+    -  use `AWS STS`
+    - IAM role is assumed providing access to AWS Services
 ![text](./images/security/cognito-2.png)
+1. Authenticate and get JWT
+2. Exchange JWT for AWS credentials
+3. Access AWS service with temporary credentials
 
 ### Encryption Primer 
 ![text](./images/security/encryption-1.png)
+- `S3` encrypts the objet as it is written in the bucket
+- Data is protected by SSL/TLS
 ![text](./images/security/encryption-2.png)
 
 ### AWS Key Management Service (KMS)
+- **Multi-tenant AWS Service**
 ![text](./images/security/kms-1.png)
+- Create and manage symmetric and asymmetric encryption keys
+- The `KMS Keys` are protected by HSM
+- Developer create customer managed `KMS` keys
+
+- `KMS Keys` are primary resoruces in `AWS KMS`
+- Used to be know as `customer master keys`
+- `KMS` also contains the key material used to encrypt and decrypt data
+- By default `AWS KMS` create the key material for a `KMS key`
+    - You can import your own key material
+    - A `KMS key` can encrypt data up to 4kb in size
+    - can generate, encrypt and encrypt `Data Encryption Keys`
+
+
+
 ![text](./images/security/kms-2.png)
+
+- External Key Store
+    - Keys can be stored outside of AWS to meet regulator requirements
+    - Can create a `KMS Key` in an `AWS KMS` external key store
+    - All keys are generated and stored in an external key manager
+    - When using XKS, key material never leaves your `HSM`
+- Custom key store
+    - can create `KMS keys` in `AWS CloudHSM` 
+    - All keys are generated adn stored in `AWS CloudHSM` cluster that you own and manage
+    - Cryptographic operations are performed solely in the AWS CloudHSM cluster 
+    - Custom key stores are not available for asymmetric `KMS Keys`
+
+- Manged KMS Keys
+    - created, managed and used on your behalf by AWS Service that is integrated with `KMS`
+    - Cannot manage these KMS keys, rotate them or change their key policies
+    - Cannot use AWS managed `KMS Keys` in cryptographic operations directly, the service that create them uses them on your behalf
+
 ![text](./images/security/kms-3.png)
+- `Data encryption Keys` 
+    - encryption keys that you can use to encrypt large amounts of data
+    - can use `AWS KMS` to generate, encrypt, and decrypt data keys
+    - `AWS KMS` does not store, manage, or track you data keys, or perform cryptographic operations with data keys
+    - You must use and manage data keys outside of `KMS`
+- You cannot enable or disable key rotation for AWS owned keys
+- Automatic key rotation supported only on symmetric encryption `KMS` keys with key material that `AWS KMS` generates
+
+
 ![text](./images/security/kms-4.png)
+- Automatic rotation generates new key material every year
+    - optional for `customer managed keys`
+- Rotation only changes the key material used for encryption the KMS key remains the same
+
+- With automatic key rotation:
+    - Properties of the `KMS Key` including the ID, ARN, Region, Polices and permission do not change when the key is rotated
+    - You do not need to change applications or aliases that refer to the key ID or key ARN of the KMS key
+    - After you enable key rotation, `AWS KMS` rotates the `KMS Key` automatically every year
+- Automatic Key rotation is not support for (can rotate them manually):
+    - Asymmetric `KMS Keys`
+    - `HMAC KMS Keys`
+    - `KMS keys` in custom key stores
+    - `KMS keys` with imported key material
+
+
+
 ![text](./images/security/kms-5.png)
+
+- Manual rotation is created a new `KMS Key` with a different `key ID`
+    - Must update your applications with the new `key ID` 
+    - can use an `alias` to represent the `KMS key` so you don't modify your application code
+        - the alias is associated with the new `KMS Key`   
+
+- `Key polices` define management and usage permissions from `KMS keys`
+    -  defines the administrative actions that are permitted for the key administrator
+
+
 ![text](./images/security/kms-6.png)
+- Multiple policy statements can be combined to specify separate administrative and usage permissions 
+- `Key policy` defines teh cryptographic actions for encrypting and decrypting data with the KMS key
+- Permissions can be specified for delegating use of the key to `AWS Services`
+    - grants useful or temporary permissions as they can be used without modifying `key policies` or `IAM policies`
+
+
 ![text](./images/security/kms-7.png)
+- To share snapshots with another account you must specify `decrypt` and `CreateGrant` permissions
+- The `kms:ViaService` condition key can be used to limit key usage to specific AWS services
+- Cryptographic erasure means removing the ability to decrypt data can be achieved when using imported key material and deleting key material
+- You must use the `DeleteImportKeyMaterial` API to remove key material
+    - makes it impossible to decrypt this data 
+- An `InvalidKeyID` exception when using `SSM Parameter Store` indicated the `KMS Key` is not enabled
+- 
 
 ### AWS CloudHSM 
 ![text](./images/security/cloud-hsm.png)
-
-### AWS Certificate Manager 
+- `Custom key store`
+- Cloud based hardware security module
+    - dedicated hardware device
+    - **single tenancy**
+- Generate and use your own encryption key
+- runs in `VPC`
+- Uses FIPS 140-2 level 3 validated HSM
+- Managed service and automatically scales
+- Retain control of your encryption keys
+    - you control access
+    - AWS has no visibility of yur encryption keys
+- Use cases:
+    - Offload SSL/TLS from web servers
+    - Protect private keys for issuing certificate authority
+    - Store the master key for Oracle DB transparent Data Encryption
+    - Custom key store for `AWS KMS` - retain control of the `HSM` that protects mater keys
 ![text](./images/security/acm-1.png)
+
+### AWS Certificate Manager (ACM)
 ![text](./images/security/acm-2.png)
+- Create store, renew SSL/TLS X.509 certs
+- Single domains, multiple domain names and wildcards
+- Integrates with several AWS services
+
+
+- Public certificates are signed by `AWS Public Certificate Authority`
+    - can create a Privet CA
+    - can issue private certs
+    - can import certs from third party issuers
 
 ### SSL/TLS Certificate ACM
 
-### AWS Web Application Firewall
+### AWS Web Application Firewall (WAF)
 ![text](./images/security/waf-1.png)
+- Web Application firewall
+- Create rules to filter web traffic based on conditions that include IP Addresses, HTTP headers and body, custom URIs
+- Makes it easy to create rules to block common web exploits like SQL Injection and XSS
+
+
 ![text](./images/security/waf-2.png)
+- `Web ACL` - Web Access Control Lis used to protect a set or resources
+- `Rules` - contains a statement that defined the inspection, criteria and action to take if a web request meets the criteria
+- `Rule groups` - can use rules individually or in reusable rule groups
+- `IP Sets` - IP Set provide a collection of IPs and IP ranges you want to use together in a rule statement 
+- `Regex Patter set` - provides a collection fo regex to use in a rule statement
+
 ![text](./images/security/waf-3.png)
+- `Rule Action` tells `WAF` what to do with a wen request when it matches the criteria in a rule
+    - Count - counts the request but doesn't determine whether to allow of block
+        - `WAF`continues processing the remaining rules in the ACL
+    - Allow - allows request to be forward to AWS resource
+    - Block - block request from resource
+        - returns 403
+- Match statements compare the web request or its origin against conditions you provide
+    - Geographic
+    - IP Set
+    - Regex
+    - Size 
+    - SQLi Attack
+    - String Match
+    - XSS
 
 ### Amazon inspector 
 ![text](./images/security/inspector-1.png)
+- Runs assessments to check for security exposures and vulnerabilities in `EC2`
+    - can be configured to run on a scheduled
+    - Agent must be installed on `EC2` for hosts assessments
+        - Network Assessments do no require an agent
+
+- Network Assessments
+    - Asses network config analysts to check for ports reachable from outside the `VPC`
+    - If `Inspector agent` is installed on `EC2` instances, the assessment also find processes reachable on ports
+    - Price based on number of instance assessments
+
 ![text](./images/security/inspector-2.png)
+
+- Host Assessments
+    - Asses vulnerable software (CVE), host hardening (CIS Benchmarks) and security best practices
+    - Requires an agent
+    - Price based on number on instance assessments
 
 ### Amazon Macie 
 ![text](./images/security/macie.png)
+- Fully managed data security and privacy service
+- Uses ML and pattern matching to discover, monitor adn help you to protect your sensitive data on `S3`
+- Enabled security compliance and preventative security
+    - Identities variety of data types including PII, PHI, regulatory docs, API and Secret Keys
+    - Identify changes to policy and ACL
+    - Continuous monitoring the security posture of `S3`
+    - Generate security findings that you can view in `Macie` console, `AWS Security Hub` or `Amazon Event Bridge`
+    - Manage multiple AWS accounts using `AWS Organizations`
+
+1. Automatically discovers `S3` buckets
+2. Analyzes buckets using ML
+3. Sends findings to `CloudWatch Events`
+
 
 
 ### AWS Guard Duty
 ![text](./images/security/guard-duty.png)
+- Intelligent threat detections service
+- Detects account, instance, bucket compromise and malicious reconnaissance
+- Continuous Monitoring for events across:
+    - `AWS Cloudtrail Manage Events`
+    - `AWS Cloudtrail S3 Data Events`
+    - `Amazon VPC Flow logs`
+    - `DNS Los`
+
 
 ### AWS Shield
 ![text](./images/security/shield.png)
+- Managed DDOS protection service
+- Safeguards web applications running on AWS with always on detection and automatic inline mitigations
+- Helps minimize application downtime and latency
+- Two tiers
+    - standard - no cost
+    - advanced - 3k per month and 1 year commitment
+- Integrated with `Amazon CloudFront`
+    - standard included by default
 
 ### Defense In Depth 
 ![text](./images/security/did.png)
+- Practice of implementing security at multiple later of the infrastructure
+- `KMS` - used to encrypt ebs volumes
+- `Inspector` - check for vulnerabilities and send a notification if one is found
+- `AWS WAF` - Protect against common exploits
+- `AWS Shield` - DDOS protections
+- `ACM` - protect our ALB with SSL
 
 
 
