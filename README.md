@@ -2284,6 +2284,16 @@ OR
 
 
 ## Database and Analytics ##
+- https://digitalcloud.training/amazon-rds/
+- https://digitalcloud.training/amazon-aurora/
+- https://digitalcloud.training/amazon-dynamodb/
+- https://digitalcloud.training/amazon-elasticache/
+- https://digitalcloud.training/amazon-redshift/
+- https://digitalcloud.training/amazon-emr/
+- https://digitalcloud.training/amazon-kinesis/
+- https://digitalcloud.training/amazon-athena/
+- https://digitalcloud.training/aws-glue/
+- https://digitalcloud.training/aws-waf-shield/
 
 ### Database Types and Use Cases ###
 
@@ -2295,11 +2305,33 @@ OR
 
 ### Amazon Relational Database Service (RDS) ###
 ![text](./images/db-and-analytics/01-rds.png)
+- Managed relational db
+- DB Instance can contain multiple user create databases
+- `RDS` uses `Amazon EBS Volumes` for storage
+- Backups cna be taken using `EBS Snapshots`
+- Must chose a DB Instance type
 ![text](./images/db-and-analytics/02-rds.png)
+- `RDS` scales up by changing instance type
+    -  DB must shut down and restart
+    - Scaling up is required for improved write performance
+    - Scale horizontally to Improve reads 
+        - Reads can be directed to Read Replicas 
+
 ![text](./images/db-and-analytics/03-rds.png)
+- Multi-AZ deployments enable automatic disaster recovery
+- There is a primary writeable copy and a stand by in another `AZ`
+- If there is a failure the `CNAME` alias is update to point to the stand by
 
 ### Amazon RDS Backup and Recovery ###
 ![text](./images/db-and-analytics/backups.png)
+- Snapshot it taken 
+    - restore can be to any point in time during the retention period
+    - 0 - 35 days
+- Can manually backup the DB
+    - for single `AZ` there could be a brief suspension of I/O
+    - snapshots do not expires when manually taken
+- `Maintenance Windows` are used to update the operating system, patch etc...
+
 
 ### Create Amazon RDS Database ###
 
@@ -2307,7 +2339,19 @@ OR
 
 ### Amazon RDS Security ###
 ![text](./images/db-and-analytics/01-security.png)
+- RDS DB can have an IP Address
+- Can configure `security groups`, `SSL/TLS` and RDS encryption at rest
+    - can only enable Encryption at the point when you create the db
+    - Could see minimal performance impact when  having encryption on
+
 ![text](./images/db-and-analytics/02-security.png)
+- Read Replicas must match the encryption status as the primary
+- The same `KMS Key` is used if in the same `Region` as the primary
+- To change the encryption status 
+    1. Take an unencrypted `snapshot`
+    2. Encrypt the `snapshot`
+    3. create a db from the encrypted snapshot
+
 
 ### Create Encrypted Copy Of RDS Database ###
 
@@ -2316,87 +2360,284 @@ OR
 ### Amazon Aurora ###
 
 ![text](./images/db-and-analytics/aurora-1.png)
+- AWS DB with support for MySQL and PostgresSQL compatible
+    - 5x faster than MySQL
+    - 3x faster than PostgresSQL
+- Distributed, fault tolerant, self healing system
+    - 128 TB per db
+
+
+- Uses 3 AZ in the same `Region`
+    - `Aurora Replicas`
+        - scale out read requests
+    - Keeps 6 copies of the data
+    - Primary and replicas can read
+    - Primary can write
+    - Can use auto scaling to add replicas
+
 ![text](./images/db-and-analytics/aurora-2.png)
 
 
 ### Amazon Aurora Deployment Operations ###
 ![text](./images/db-and-analytics/aurora-3.png)
+- 6 copies of the data come together to form a single logical volume
+- cam promote Aurora Replica to be the new primary
+    - can set tiers for this
+- Supports cross Region Replica with `MySQL`
 ![text](./images/db-and-analytics/aurora-4.png)
+- Applications can connect to the `cluster reader endpoint`
+- Replication uses the `Aurora Storage Layer`
+- primary reigion supports reads and writes
+    - secondary just read
+
+- Can have multi master, up to 4 read/write nodes
+    -  must be in the same region
 ![text](./images/db-and-analytics/aurora-5.png)
+- DB is not always running 
+- Can scale up and down 
+- Aurora Capacity Unit
+    -  2Gb of memory + CPU
+- Use Cases:    
+    - variable/unpredictable work loads
+    - new/dev dbs
+
 
 ### Amazon RDS Proxy ###
 ![text](./images/db-and-analytics/rds-proxy.png)
+- Managed DB proxy for RDS
+- Highly available across multi-AZ
+- increases scalability, fault tolerance, security
+- Goes between the DB and serverless functions
+    - Creates a pool of connection to the db
+
 
 
 
 ### Amazon Elasticache ###
 ![text](./images/db-and-analytics/elasticache-1.png)
+- Fully managed implementation of Redis and Memcached
+- Key/value store
+- In memory db
+- Can be put in front of databases such as `RDS` and DynamoDB
+- Runs on `EC2`, have to chose an instance type 
+
+
+- Redis
+    - Can persist data
+    - complex data
+    - Only can partition if in cluster mode
+    - can encrypt
+    - HA
+    - Supports multi-az
+    - does mot support multithreading
+
+- Memcached
+    - data not persisted
+    - used with simple data types
+    - parition data
+    - no encrypted or high availability
+    - multi-threaded
+
 ![text](./images/db-and-analytics/elasticache-2.png)
+- best used for static and frequently accessed data
+- must be able to tolerate stale data 
 
 
 ### Scaling Elasticache ###
 
 ![text](./images/db-and-analytics/elasticache-3.png)
+- Memcached
+    - adds node to cluster
+    - scale vertically by changing node type, must create cluster manually
+    - each not is a partition of data
+        - no backup 
+
+
+
+
 ![text](./images/db-and-analytics/elasticache-4.png)
+- Redis 
+    - cluster mode enabled
+        - Shards have a primary db adn 1+ replica
+        - can have multiple shards
+    - cluster mode disabled
+        - can only have 1 share but it can be across `AZ`
 
 ### Create Elasticache Cluster ###
 
 ### Amazon DynamoDB  ###
 
 ![text](./images/db-and-analytics/dynamo-1.png)
+- Fully managed, serverless, NoSQL db
+- Key value store
+- push button scaling
+    - no downtime
+- `Tables` have `items`
+    - `Items` have `attributes`
+
+
 ![text](./images/db-and-analytics/dynamo-2.png)
+- TTL lets you define when items in a table expires
+    - no extra cost
+    - does not use `Write Capacity Units` or  `Read Capacity Units`
+        - you pay per units
+- `Composite key` is a combination of `partition key` and `sort key`
+
 ![text](./images/db-and-analytics/dynamo-3.png)
 
 ### Creating A DynamoDB Table ###
 
 ### DynamoDB Streams ###
 ![text](./images/db-and-analytics/dynamo-streams.png)
+- Captures a time-ordered sequence of item-level modifications in `DynamoDB table` and durably stores the information for up to 24 hours 
+    - often uses with `Kinesis Client Library`
 
-### DynamoDB Accelerator ###
+### DynamoDB Accelerator (DAX) ###
 ![text](./images/db-and-analytics/dynamo-accelerator-1.png)
+- Managed in-memory cache that increases performance
+    - **microsecond latency**
+- Can be a read-through and write-through cache
+    - improves both reads and writes 
+- Works with existing `DynamoDB` api calls
+- Runs on nodes within a VPC
+    - can place it in front of `DynamoDB Table`
+- Requires `IAM Role` for permissions to access the `DynamoDB Table`
 ![text](./images/db-and-analytics/dynamo-accelerator-2.png)
+- Less management overhead than `ElasticCache`
+
 
 ### DynamoDB Global Tables ###
 ![text](./images/db-and-analytics/dynamo-global-tables.png)
+- Can deploy `DynamoDB` in a `region` and read and write to other regions
+- `Multi-Active db`
+- The tables are asynchronously replicated
+
 
 ### Enable Global Table ###
 
 ### Amazon RedShift ###
 ![text](./images/db-and-analytics/redshift-1.png)
+- Fast, fully managed data warehouse
+- SQL based
+- Used for analytics
+- USes `EC2` instances
+- Always maintains 3 copies of the data 
 ![text](./images/db-and-analytics/redshift-2.png)
+- When running reporting on a regular basis you can run the tool against the read replica
+- If we have many dbs all over, the data can be loaded into `RedShift` which will let you query the data with `SQL`, `QuickSite` 
 ![text](./images/db-and-analytics/redshift-3.png)
+- Redshift Spectrum can run SQL queries on data in `S3 data lake`
 
 
 ### Amazon Elastic Map Reduce ###
 ![text](./images/db-and-analytics/emr.png)
+- manage cluster that simplifies running big data frameworks including Hadoop and Apache Spark
+    - Extract, transform, load (ETL)
+- EMR always runs within an AZ
+- Can attach to different data stores
+    - can have EBS volumes (optional)
+- Run in cluster instances
 
 ### Amazon Kinesis ###
 ![text](./images/db-and-analytics/kinesis-1.png)
+- related to streaming data 
+    - IOT sensors
+- The data sources are ingested into data streams
+- Can process it or pass it into `Kineses Data Analytics`
+- Firehose loads the data directly into another service 
+    -ex: `S3`
+
+- Producers send data to `Kinesis` , data is stored in `shards` for 24 hrs by default
+    - can be up to 365 days
+- Consumers then take the data and process it
+    - data can then be saved into another AWS Service
+- Happening in real time
 ![text](./images/db-and-analytics/kinesis-2.png)
+- `Kineses Client Library (KCL)` helps you consume and process data from a `Kinesis Data Stream`
+    - Enumerates shards and instantiates processor for each shard it manages
+    - Each `shard` is processed by exactly one `worker`
+    - One `Worker` can process any number of `shards`
+
 ![text](./images/db-and-analytics/kinesis-3.png)
+- Order is maintained for `record` within a `shard`
+- A partition key can be specified with `PutRecord` to group data by `shard`
+
+- `Kineses Data Firehose`
+    - producers send data to `firehose`
+    - there are no `shards`, completely automated
+        - scalability is elastic
+    - `Firehose` data is sent to another AWS service for storing, data can be optionally processed/transformed using `Lambda`
+    - near rel time delivery (60 seconds )
 ![text](./images/db-and-analytics/kinesis-4.png)
+- `Kineses Data Analytics`
+    - real time SQL processing for streaming data
 
 ### Amazon Athena and AWS Glue ### 
 - https://aws.amazon.com/blogs/big-data/top-10-performance-tuning-tips-for-amazon-athena/
 
 ![text](./images/db-and-analytics/glue-1.png)
+- `Athena` can query data in CSV, TSV, JSON, Parquet and ORC formats
+- Point `Athena` at data source in `S3` and run SQL queries
+- `AWS Glue` is used as a `Metadata Catalog`
 ![text](./images/db-and-analytics/glue-2.png)
+- `Athena` queries data in `S3` using SQL
+- Uses a managed `data catalog` (`AWS Glue`) to store information and schemas about the database tables
+- Use compression, partition data, optimize Order By and Group By, only include the data you need
 ![text](./images/db-and-analytics/glue-3.png)
+- `AWS Glue` - fully managed ETL service
+    - for preparing data for analytics
+    - runs ETL jobs on a fully managed, scale out Apache Spark env
+    - discovers data and stores the associated metadata (table definition and schema) in a `data catalog`
+    - Can  use a crawler to populate the catalog with tables
+        - can crawl multiple data stores in single run
+        - upon completion crawler create or updates one or more tables 
+        - ETL jobs that you define use the data catalog tables as sources and targets
 
 ### Query S3 ALB Access Logs with Athena ### 
 
 
-### Amazon OpenSearch Service (ElastiSearch)
-![text](./images/db-and-analytics/elasticache-1.png)
-![text](./images/db-and-analytics/elasticache-2.png)
-![text](./images/db-and-analytics/elasticache-3.png)
-![text](./images/db-and-analytics/elasticache-4.png)
-![text](./images/db-and-analytics/elasticache-5.png)
-![text](./images/db-and-analytics/elasticache-6.png)
+### Amazon OpenSearch Service (ElasticSearch)
+![text](./images/db-and-analytics/elastisearch-1.png)
+- Search, visualize and analyze text and unstructured data 
+- `OpenSearch` is the successor to `ElasticSearch`
+- deploy nodes and replicas across `AZ`
+- Distributed search and analytics suite
+- Supports SQL
+- Availability in up to 3 `AZ`
+![text](./images/db-and-analytics/elastisearch-2.png)
+- Clusters are known as `OpenSearch Service Domains`
+- Data is ingested from multiple sources
+- 
+![text](./images/db-and-analytics/elastisearch-3.png)
+- Clusters can be deployed in a `VPC` for secure intra-vpc communications
+- `VPN` or proxy required to connect from the internet
+- Cannot use IP-based access policy
+- Limitations of `VPC`
+    - cant switch from `VPC` to public endpoint
+    - cant launch your domain within a `VPC` that uses dedicated tenancy
+    - After you place a domain within a `VPC` you can't move it to a different `VPC`, but you can change the subnets and security groups
+![text](./images/db-and-analytics/elastisearch-4.png)
+-  Aggregate logs from systems and applications, analyze these logs and create visualizations 
+![text](./images/db-and-analytics/elastisearch-5.png)
+![text](./images/db-and-analytics/elastisearch-6.png)
+- Best Practices:
+    - Deploy data instance across 3 `AZ`
+    - Provision instances in multiple of 3 for equal distributions
+    - If 3 `Az` not available use 2 `AZ` with equal numbers of instances
+    - Use 3 dedicated master nodes
+    - Apply restrictive, resource based access policies to the domain
+    - Create the domain within an Amazon `VPC`
+    - for sensitive data enable node-to-node encryption 
+
 
 
 ### AWS Batch
 ![text](./images/db-and-analytics/aws-batch.png)
+- Service to run batch workloads
+- `A job` is submitted to a queue until scheduled onto a compute environment
+- `A job` is a unite of work such as a shell script, executable or docker image
+- `Batch` launches, manages and terminates resources as required 
+- Managed or unmanaged resources used to run the job
 
 ### Other Database Services 
 ![text](./images/db-and-analytics/other-db-1.png)
