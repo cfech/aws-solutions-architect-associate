@@ -2335,7 +2335,26 @@ OR
 
 ### Create Amazon RDS Database ###
 
+- Templates can help you determine the amount of storage and instance type that is used
+- Have to create  a master password
+- Can configure autoscaling and data duplication
+- 6 Subnets by default
+- Can create an `RDS Proxy` is required
+- Set if publicly accessible and set the security group
+- Can enable enhanced metrics, encryption, set maintenance window
+- Will give an estimate of the monthly costs
+
+- After creation will provide a DNS name, metrics, logs and events, configuration etc...
+    - Can modify maintenance window, see automated snapshots and take manual snapshots
+
+
 ### Create a Read Replica ###
+
+- When you have a DB, you can create a read replica
+    - just chose the region, most of the other settings should carry over
+- Replicas always have the same encryption status as the master
+
+
 
 ### Amazon RDS Security ###
 ![text](./images/db-and-analytics/01-security.png)
@@ -2356,6 +2375,15 @@ OR
 ### Create Encrypted Copy Of RDS Database ###
 
 ![text](./images/db-and-analytics/encryption.png)
+- once the DB is created with cannot change the encrypted status
+- To create an encrypted version of an existing DB
+1. Take a snapshot of the unecrypted db
+2. Copy the snapshot and encrypt it
+    - cannot go the other way
+3. Once there is an encrypted snapshot, click restore from snapshot
+    - this will create an encrypted db
+    - probably need to do some type of real time replication
+
 
 ### Amazon Aurora ###
 
@@ -2461,9 +2489,15 @@ OR
         - Shards have a primary db adn 1+ replica
         - can have multiple shards
     - cluster mode disabled
-        - can only have 1 share but it can be across `AZ`
+        - can only have 1 shard but it can be across `AZ`
 
 ### Create Elasticache Cluster ###
+
+- Determine if cluster mode is enabled or disabled (Redis)
+    - cluster mode enable replication across multiple shards for better scalability and availability
+- Must ensure security groups allow `6379` - the default redis port
+- Can enable encryption at rest and in transit
+- 
 
 ### Amazon DynamoDB  ###
 
@@ -2486,6 +2520,15 @@ OR
 ![text](./images/db-and-analytics/dynamo-3.png)
 
 ### Creating A DynamoDB Table ###
+- Need to create a table
+    - table needs a name
+    - table need a `partition key`
+        - must be unique in the table
+        - can add a `sort key`
+- Chose the mode, standard or custom
+    - custom offers alot more options
+- can run scans and queries in the console
+
 
 ### DynamoDB Streams ###
 ![text](./images/db-and-analytics/dynamo-streams.png)
@@ -2514,6 +2557,13 @@ OR
 
 
 ### Enable Global Table ###
+- When we have a table we can create `global table`
+    - will require `Dynamo DB streams` to be enabled
+    - items will be synchronized between regions
+        - bi-directional
+
+
+
 
 ### Amazon RedShift ###
 ![text](./images/db-and-analytics/redshift-1.png)
@@ -2594,7 +2644,7 @@ OR
         - ETL jobs that you define use the data catalog tables as sources and targets
 
 ### Query S3 ALB Access Logs with Athena ### 
-
+- Before running queries in `Athena` we must set the `query results bucket`
 
 ### Amazon OpenSearch Service (ElasticSearch)
 ![text](./images/db-and-analytics/elastisearch-1.png)
@@ -2641,15 +2691,106 @@ OR
 
 ### Other Database Services 
 ![text](./images/db-and-analytics/other-db-1.png)
+- `DocumentDB` - provides mongoDB compatibility
+    - service that is purpose built for JSON data management at scale
+    - Fully managed
+    - Scales automatically to 64 TB
+    - Millions of requests per second with up to 15 low latency read replicas
+    - 4 9s of availability and replicates six copies of data across 3 `AZ`
+    - Can migrate from MongoDB using `AWS DMS`
+
 ![text](./images/db-and-analytics/other-db-2.png)
+- `Keyspaces` - scalable, highly available, managed Cassandra compatible DB
+    - Enables uses of Cassandra Query Language (CQL)
+    - Serverless and fully managed
+    - Scales automatically
+    - Can serve thousands of requests per second with unlimited throughput and storage
+    - Consistent, single-digit-millisecond response times at any scale
+    - 99.99% availability
+- `Neptune`
+    - Fully managed graph DB
+    - Build and run identity, knowledge, fraud graph and other applications
+    - Deploy high performance graph application using popular open-source APIs
+        - Gremlin
+        - openCypher
+        - SPARQL
+    - > 99.99% availability
+    - Storage is fault tolerant and self healing
+    - DB volumes grow in increments of 10GB up to 64 TB
+    - Create up to 15 read replicas
+
+
 ![text](./images/db-and-analytics/other-db-3.png)
+- `Quantum Ledger DB`
+    - Fully managed ledger database that provides transparent, immutable and cryptographically verifiable transaction log
+    - Built in, immutable journal that stores an accurate adn sequenced entry of every data change
+    - Append only
+    - Uses cryptography to create a concise summary of your change history
+        - Using SHA-256
+    - Serverless and offers automatic stability
+
 
 ### Other Analytics Services ###
 ![text](./images/db-and-analytics/other-services-1.png)
+- `Timestream` - db for IOT operational Services
+    - Faster and cheaper than relational databases
+    - Keeps recent data in memory and moves historical data to cost optimized storage tier based on defined policies
+    - Serverless and scales automatically
+- `AWS Data Exchange`
+    - Data marketplace with 3000+ products from 250+ providers
+    - Supports data files, data tables, data apis
+    - Consumes directly into data lakes, applications, analytics and ML models
+    - Automatically export new or update data sets to `S3`
+    - Query data table with `AWS  Data Exchange` for `Amazon Redshift`
+    - Use AWS native authentication and governance, AWS SDKs and consistent API documentation
+
 ![text](./images/db-and-analytics/other-services-2.png)
+- `AWS Data Pipeline`
+    - managed ETL service
+    - Process and move data between different AWS compute and storage services
+    - Data sources can also be on-premises
+    - Data can be processed and transformed
+    - Results can be loaded to services such as `S3`, `RDS`, `DynamoDB`, `EMR`
+
 ![text](./images/db-and-analytics/other-services-3.png)
+- Data Pipeline Example
+    1. Data comes into `S3` bucket
+    2. Hive Activity converts files to `.csv`  using `EMR`
+    3. Results are saved to `S3`
+    4. `RedShiftCopyActivity` loads data into ``RedShift`
+
+
+- Data lake is a centralize repo that allows you to store all your structured and unstructured data at any scale
+    - can store as is, do not have to structure the data
+    - can convert later on
+- can create dashboard and visualizations
+- can store data as-is, without having first structure the data
+- used for big data processing and real-time analytics, ML
+
 ![text](./images/db-and-analytics/other-services-4.png)
+- `AWS Lake Formation`
+    - enables you to set up secure data lakes in days
+    - Can be collected from dbs and object storage
+    - Saved into `Amazon S3 Data lake`
+    - Can clean and classify data using ML algorithms
+    - Security can be applied at the column, row or cell levels
+    - Data sets can be used through services such as `Redshift`, `Athena`, `EMR` for apache spark and `Amazon QuickSight`
+    - Builds on the capabilities of `AWS Glue`
+
+
 ![text](./images/db-and-analytics/other-services-5.png)
+- `Managed Streaming for Apache Kafka` 
+    - used for ingesting, processing streaming data in real-time
+    - Build and run Kafka Applications
+    - Fully managed service
+    - Provisions, configures, and maintains Kafka Clusters and Apache ZooKeeper nodes
+    - Security levels include:
+        - `VPC` network Isolation
+        - `IAM` control plan for API authorization
+        - Encryption at rest
+        - TLS encryption in transit
+        - TLS base certificate auth
+        - SASL/SCRAM auth secured by `AWS Secrets Manager`
 
 
 ## Deployment And Management ##
