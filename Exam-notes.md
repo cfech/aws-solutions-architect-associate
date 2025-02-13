@@ -31,7 +31,94 @@
 
 - `AWS Resource Access Manager (RAM)` is a service that enables you to easily and securely share AWS resources with any AWS account or within your `AWS Organization`. You can share AWS Transit Gateways, Subnets, AWS License Manager configurations, and `Amazon Route 53 Resolver` rules resources with RAM.
 
-- File Gateway = SMB
+
+| Gateway Type          | Protocol(s) Supported | Client File System (Typical) | Use Case                                                                                                    |
+|-----------------------|----------------------|-----------------------------|-------------------------------------------------------------------------------------------------------------|
+| File Gateway          | NFS, SMB             | NTFS (Windows via SMB) / Any POSIX FS (Linux via NFS) | Stores files as objects in S3, providing a file-based interface for applications.                             |
+| Volume Gateway        | iSCSI                | Any FS supported by the OS    | Offers block storage volumes backed by S3 or EBS, suitable for high-performance, low-latency applications. |
+| Tape Gateway          | iSCSI-VTL            | N/A (Emulates a tape library) | Simplifies tape-based backups to AWS, providing a cost-effective solution for long-term archival.           |
+| Amazon FSx File Gateway | SMB                  | NTFS                         | Provides a local cache for frequently accessed files on Amazon FSx for Windows File Server.                 |          |
+
+
+- `Amazon Kendra` an intelligent search service.
+- `Amazon Polly` a cloud service that converts text into speech
+- Can use `AppSync` with DynamoDB to make it easy for you to build collaborative apps that keep shared data updated in real-time
+    - GraphQL Api
+    - `AppSync pipeline resolvers` offer an elegant server-side solution to address the common challenge faced in web applications—aggregating data from multiple database tables. 
+- `Amazon AppFlow` is simply an integration service for transferring data securely between Software-as-a-Service (SaaS) applications like Salesforce, SAP, Zendesk, Slack, ServiceNow, and AWS services.
+- `AWS Backup` is a centralized backup service that makes it easy and cost-effective for you to backup your application data across AWS services in the AWS Cloud, helping you meet your business and regulatory backup compliance requirements
+
+- A `subnet` can only be associated with one `route table` at a time, but you can associate multiple subnets with the same subnet `route table`. You can optionally associate a `route table` with an `internet gateway` or a `virtual private gateway` (gateway `route table`). This enables you to specify routing rules for inbound traffic that enters your `VPC` through the `gateway`
+
+- stopping – The instance is preparing to be stopped. Take note that you will not billed if it is preparing to stop however, **you will still be billed if it is just preparing to hibernate.**
+
+
+
+- `AWS Transit Gateway` provides a hub and spoke design for connecting VPCs and on-premises networks.
+
+
+-  Keep in mind that an `EC2 instance` has an underlying physical host computer. If the instance is stopped, `AWS` usually moves the instance to a new host computer. Your instance may stay on the same host computer if there are no problems with the host computer
+
+- You can’t have an `Amazon S3 managed encryption key` for client-side encryption. As its name implies, an `Amazon S3 managed key` is fully managed by AWS and also rotates the key automatically without any manual intervention
+
+- `Amazon WorkDocs` is commonly used to easily collaborate, share content, provide rich feedback, and collaboratively edit documents with other users.
+
+
+
+- `Expedited retrievals` allow you to quickly access your data when occasional urgent requests for a subset of archives are required. For all but the largest archives `(250 MB+),` data accessed using `Expedited retrievals` are typically made available within `1–5 minutes`. `Provisioned Capacity` ensures that retrieval capacity for `Expedited retrievals` is available when you need it.
+- `Provisioned capacity` ensures that your retrieval capacity for `expedited retrievals` is available when you need it. Each unit of capacity provides that at least three `expedited retrievals` can be performed every five minutes and provides up to `150 MB/s` of retrieval throughput. 
+
+- `Amazon FSx File Gateway` to support the `SMB` file share for the on-premises application
+
+- `AWS Artifact `is your go-to, central resource for compliance-related information that matters to you. It provides on-demand access to AWS’ security and compliance reports and select online agreements
+
+- `AWS Transfer for SFTP` enables you to easily move your file transfer workloads that use the Secure Shell File Transfer Protocol (SFTP) to AWS without needing to modify your applications or manage any SFTP servers.
+
+- `Amazon S3 access points` simplify data access for any AWS service or customer application that stores data in `S3`. `Access points` are named network endpoints that are attached to buckets that you can use to perform S3 object operations, such as `GetObject` and `PutObject`.
+
+- `CloudFront Match Viewer` is an Origin Protocol Policy that configures `CloudFront` to communicate with your origin using HTTP or HTTPS, depending on the protocol of the viewer request
+
+- `An Amazon S3 Glacier (Glacier) vault` can have one resource-based vault access policy and one `Vault Lock policy` attached to it. A `Vault Lock policy` is a vault access policy that you can lock. Using a `Vault Lock policy` can help you enforce regulatory and compliance requirements
+
+- `SageMaker Clarify `is a tool designed for detecting bias and providing explainability for machine learning models
+
+
+- `Babelfish for Aurora PostgreSQL` is an extension designed for Amazon Aurora PostgreSQL. It allows the database to interpret commands from applications developed for Microsoft SQL Server. By serving as a translation layer, it converts T-SQL (Microsoft’s SQL dialect) into PostgreSQL, enabling SQL Server applications to run directly on Aurora PostgreSQL with minimal or no changes required to the code.
+
+- `Amazon Comprehend Medical` uses advanced machine learning models to accurately and quickly identify medical information such as medical conditions and medication and determine their relationship to each other, for instance, medication and dosage. You access `Comprehend Medical` through a simple API call, no machine learning expertise is required, no complicated rules to write, and no models to train.
+
+
+-` AWS Health` provides ongoing visibility into your resource performance and the availability of your AWS services and accounts. You can use` AWS Health` events to learn how service and resource changes might affect your applications running on AWS.` AWS Health` provides relevant and timely information to help you manage events in progress.` AWS Health` also helps you be aware of and to prepare for planned activities.
+
+
+- `AWS Systems Manager Run Command` lets you remotely and securely manage the configuration of your managed instances. A managed instance is any Amazon EC2 instance or on-premises machine in your hybrid environment that has been configured for Systems Manager
+
+
+
+- `Karpenter `is a flexible, high-performance Kubernetes cluster autoscaler that launches appropriately sized compute resources, like `Amazon EC2 instances`, in response to changing application load. It integrates with AWS to provision compute resources that precisely match workload requirements.
+
+
+- `EFA` provide OS bypass ability for Linux systems
+    - not supported for windows
+    - supports HPC workloads
+
+- you can’t assign an Elastic IP address to an `Application Load Balancer`
+
+
+
+- `Inspector`: Vulnerability management. Finds weaknesses in your configurations.
+- `Detective`: Threat investigation. Analyzes security events to understand what happened.
+- `GuardDuty`: Threat detection. Continuously monitors for malicious activity and unusual behavior
+
+- `AWS PrivateLink` (which is also known as VPC Endpoint) is just a highly available, scalable technology that enables you to privately connect your VPC to the AWS services as if they were in your VP
+
+- `VPC` endpoints for `S3` and `DynamoDB`
+    -  `gateway` - used for AWS Services
+    - `interface` - used for external services
+        -  an elastic network interface with a private IP address from the IP address range of your subnet. Unlike a Gateway endpoint, you still get billed for the time your interface endpoint is running and the GB data it has processed. 
+
+![text](images/exam-prep/multi-az-vs-read.png)
+![text](images/exam-prep/ec2-types.png)
 
 ## From Official AWS Practice Exam ##
 
