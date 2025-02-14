@@ -1,3 +1,5 @@
+**The following notes are from various practice exams**
+
 ## Takeaways from Practice Exams ##
 
 - `AWS PrivateLink` enables private connectivity between VPCs and supported AWS or third-party services, ensuring that traffic does not traverse the public internet.
@@ -39,6 +41,18 @@
 | Tape Gateway          | iSCSI-VTL            | N/A (Emulates a tape library) | Simplifies tape-based backups to AWS, providing a cost-effective solution for long-term archival.           |
 | Amazon FSx File Gateway | SMB                  | NTFS                         | Provides a local cache for frequently accessed files on Amazon FSx for Windows File Server.                 |          |
 
+
+
+| Service/Storage Type | Type of Storage | Protocol(s) | File System(s) | Use Cases                                                                                                  | Scalability/Performance |
+|----------------------|-----------------|-------------|----------------|-------------------------------------------------------------------------------------------------------------|------------------------|
+| Amazon EFS           | File            | NFS v4      | EFS            | Shared file storage for Linux-based applications, web serving, content management, big data analytics.        | Highly scalable       |
+| Amazon FSx for Windows File Server | File | SMB | NTFS | Shared file storage for Windows-based applications, enterprise applications, home directories.                               | Highly scalable       |
+| Amazon FSx for Lustre | File | Lustre | Lustre | High-performance computing, machine learning, video processing, and other workloads requiring fast parallel access. | Extremely high performance |
+| Amazon FSx for NetApp ONTAP | File | NFS, SMB, iSCSI | ONTAP | Enterprise applications, lift-and-shift of NetApp environments, hybrid cloud storage, general-purpose file sharing. | Highly scalable       |
+| Amazon S3            | Object          | HTTP/HTTPS  | N/A (Object Storage) | General-purpose storage, data lakes, backups, archives, media storage.                                        | Massively scalable    |
+| Amazon EBS           | Block           | N/A (Block Device) | Various (ext4, XFS, NTFS, etc.) | Block storage for EC2 instances, operating systems, applications, databases.                                  | Scalable             |
+
+- `Amazon FSx for OpenZFS` does provide high-performance storage and delivers sub-millisecond latency, but it does not fulfill the requirement of providing multi-protocol access to the data such as SMB and iSCSI protocols. This particular `Amazon FSx` type allows sharing files using NFSl only.
 
 - `Amazon Kendra` an intelligent search service.
 - `Amazon Polly` a cloud service that converts text into speech
@@ -117,8 +131,48 @@
     - `interface` - used for external services
         -  an elastic network interface with a private IP address from the IP address range of your subnet. Unlike a Gateway endpoint, you still get billed for the time your interface endpoint is running and the GB data it has processed. 
 
+- `AWS Proton `allows you to deploy any serverless or container-based application with increased efficiency, consistency, and control. You can define infrastructure standards and effective continuous delivery pipelines for your organization. `Proton` breaks down the infrastructure into environment and service (“infrastructure as code” templates).
+
+- `Amazon Data Lifecycle Manager `is a service designed to automate the management of `Amazon EBS snapshots and volumes`, which significantly reduces operational overhead. By deleting expired and unused snapshots and setting up lifecycle policies for new snapshots, companies can ensure that only necessary snapshots are retained, thereby optimizing costs associated with storage. This service allows for the automated deletion of outdated snapshots based on policies defined by the user, which eliminates the need for manual monitoring and deletion, a task that can be both time-consuming and error-prone.
+
+
+- CloudTrail
+    - `AWS CloudTrail Lake` lets you run SQL-based queries on your event logs in` AWS CloudTrail`. It provides a robust and efficient way to directly analyze `CloudTrail` logs. `CloudTrail Lake` converts existing events in row-based JSON format to Apache ORC format. ORC is a columnar storage format that is optimized for fast retrieval of data. Events are aggregated into event data stores, which are immutable collections of events based on criteria that you select by applying advanced event selectors.
+    - To determine whether a log file was modified, deleted, or unchanged after `CloudTrail` delivered it, you can use `CloudTrail log file integrity validation`. This feature is built using industry-standard algorithms: SHA-256 for hashing and SHA-256 with RSA for digital signing.
+    - `CloudTrail Insights Events` is just an optional feature that allows you to detect unusual write API activities in your account.
+    - `The CloudTrail Processing Library` is just a Java library that simplifies the processing of `CloudTrail logs`. It's not capable of detecting log tampering.
+
+
+
+- `Amazon S3 Storage Lens` offers a robust analytics solution that provides comprehensive visibility into object storage usage and activity across an organization. Through an interactive dashboard on the S3 Management Console, users can access metrics like storage usage, object counts, and versioning status, along with actionable recommendations for cost optimization and security improvement. Data can also be exported for deeper analysis using tools such as Amazon QuickSight, Athena, or Redshift.
+
+- `AWS Glue DataBrew` is essentially a no-code tool that streamlines the process of preparing data for analysis and machine learning. It’s especially valuable for data professionals looking to clean, normalize, and transform their data more efficiently. One of the standout features of DataBrew is its ability to cut down data preparation time by up to 80% compared to traditional manual methods. This efficiency boost not only accelerates the data preparation process but also allows data analysts and scientists to focus more on extracting insights rather than getting stuck in the initial stages of data processing.
+
+- `AWS Glue Studio’s` visual interface for data transformations, which supports non-coding transformations and could be shared via `AWS Glue jobs`. However, it doesn’t specifically address the requirements for data profiling or data lineage as directly as DataBrew does.
+
+- `The Instance Scheduler on AWS solution` automates the starting and stopping of `Amazon Elastic Compute Cloud (Amazon EC2)` and `Amazon Relational Database Service (Amazon RDS) instances.`
+    - This solution helps reduce operational costs by stopping resources that are not in use and starting resources when their capacity is needed. For example, a company can use an Instance Scheduler on AWS in a production environment to automatically stop instances outside of business hours every day. If you leave all of your instances running at full utilization, this solution can result in up to 70% cost savings for those instances that are only necessary during regular business hours (weekly utilization reduced from 168 hours to 50 hours).
+
+- `Amazon Cognito `provides user pools, which are user directories, to help handle user registration, authentication, and account recovery. Amazon API Gateway supports Cognito user pool authorizers in authenticating API calls. Using `Amazon Cognito `user pools with `API Gateway` for RESTful APIs allows seamless security and identity management integration, ensuring operational efficiency and scalability suitable for millions of users.
+
+- `Amazon Cognito `user pool is a comprehensive user directory that enables both authentication and authorization mechanisms for web and mobile applications. It operates as an OpenID Connect (OIDC) identity provider, facilitating robust identity verification and management. The user pool enhances security through multiple layers, supports identity federation to allow integrations with other systems, and offers extensive customization options to tailor the user experience and application integration according to specific business needs.
+
+
+- The `AWS Reserved Instance Marketplace` is a place to buy and manage `Reserved Instances (RIs)` for `Amazon Elastic Compute Cloud (Amazon EC2)` and` Amazon Relational Database Service (Amazon RDS)`. `RIs` are billing discounts that can save users money compared to on-demand pricing. 
+- Only Standard `RIs` can be sold at the `Reserved Instance Marketplace.`
+
+- AWS Compute Optimizer recommends optimal AWS resources for your workloads to reduce costs and improve performance by using machine learning to analyze historical utilization metrics. Overprovisioning resources can lead to unnecessary infrastructure costs, and underprovisioning resources can lead to poor application performance. Compute Optimizer generates recommendations for the following resources:
+    - Amazon Elastic Compute Cloud (Amazon EC2) instances
+    - Amazon EC2 Auto Scaling groups
+    - Amazon Elastic Block Store (Amazon EBS) volumes
+    - AWS Lambda functions
+
+- `AWS Lake Formation` is a service that helps users manage, secure, and set up data lakes in Amazon Simple Storage Service (Amazon S3). It also helps users discover, catalog, cleanse, and transform data. 
+    - `AWS Lake Formation Blueprints` are designed to automate the process of data ingestion into the data lake. The "Incremental database" blueprint, in particular, is suitable for loading only new data from the Amazon Aurora MySQL database into the S3 data lake, based on previously set bookmarks. This ensures that the data in the data lake is continually updated with the latest operational data.
+
 ![text](images/exam-prep/multi-az-vs-read.png)
 ![text](images/exam-prep/ec2-types.png)
+![text](images/exam-prep/ec2-termination-flow.png)
 
 ## From Official AWS Practice Exam ##
 
