@@ -94,6 +94,7 @@
 - `Amazon S3 access points` simplify data access for any AWS service or customer application that stores data in `S3`. `Access points` are named network endpoints that are attached to buckets that you can use to perform S3 object operations, such as `GetObject` and `PutObject`.
 - `An Amazon S3 Glacier (Glacier) vault` can have one resource-based vault access policy and one `Vault Lock policy` attached to it. A `Vault Lock policy` is a vault access policy that you can lock. Using a `Vault Lock policy` can help you enforce regulatory and compliance requirements
 - `Amazon S3 Storage Lens` offers a robust analytics solution that provides comprehensive visibility into object storage usage and activity across an organization. Through an interactive dashboard on the S3 Management Console, users can access metrics like storage usage, object counts, and versioning status, along with actionable recommendations for cost optimization and security improvement. Data can also be exported for deeper analysis using tools such as Amazon QuickSight, Athena, or Redshift.
+- You can only add 1 `SQS` or `SNS` at a time for `Amazon S3 `events notification
 
 
 ### Networking
@@ -102,6 +103,9 @@
     -  `gateway` - used for AWS Services
     - `interface` - used for external services
         -  an elastic network interface with a private IP address from the IP address range of your subnet. Unlike a Gateway endpoint, you still get billed for the time your interface endpoint is running and the GB data it has processed. 
+- `Elastic Network Interface (ENI)` -  virtual network interface that can be attached to an `EC2` instance in a `Virtual Private Cloud (VPC`).
+    - the private IP is assigned to the `ENI` not the `EC2`
+    - the `ENI` can be moved to a different server if required
 - `EFA` provide OS bypass ability for Linux systems
     - not supported for windows
     - supports HPC workloads
@@ -117,9 +121,10 @@
 -  Keep in mind that an `EC2 instance` has an underlying physical host computer. If the instance is stopped, `AWS` usually moves the instance to a new host computer. Your instance may stay on the same host computer if there are no problems with the host computer
 
 ### DBs
-- `Babelfish for Aurora PostgreSQL` is an extension designed for Amazon Aurora PostgreSQL. It allows the database to interpret commands from applications developed for Microsoft SQL Server. By serving as a translation layer, it converts T-SQL (Microsoft’s SQL dialect) into PostgreSQL, enabling SQL Server applications to run directly on Aurora PostgreSQL with minimal or no changes required to the code.
+- `Babelfish for Aurora PostgreSQL` is an extension designed for` Amazon Aurora PostgreSQL`. It allows the database to interpret commands from applications developed for Microsoft SQL Server. By serving as a translation layer, it converts T-SQL (Microsoft’s SQL dialect) into PostgreSQL, enabling SQL Server applications to run directly on `Aurora PostgreSQL` with minimal or no changes required to the code.
 - `Amazon Data Lifecycle Manager `is a service designed to automate the management of `Amazon EBS snapshots and volumes`, which significantly reduces operational overhead. By deleting expired and unused snapshots and setting up lifecycle policies for new snapshots, companies can ensure that only necessary snapshots are retained, thereby optimizing costs associated with storage. This service allows for the automated deletion of outdated snapshots based on policies defined by the user, which eliminates the need for manual monitoring and deletion, a task that can be both time-consuming and error-prone.
 - `Amazon Aurora Global Database` is designed for globally distributed applications, allowing a single `Amazon Aurora database` to span multiple `AWS regions`. It replicates your data with no impact on database performance, enables fast local reads with low latency in each region, and provides disaster recovery from region-wide outages.
+    - You can invoke an `AWS Lambda` function from an `Amazon Aurora MySQL-Compatible Edition DB` cluster with a native function or a stored procedure
 - `RedShift` is a data warehouse and used for running analytics queries on data that is exported from transactional database systems
 - `Amazon DynamoDB `and `Amazon S3 `support gateway endpoints, not interface endpoints. With a gateway endpoint you create the endpoint in the `VPC`, attach a policy allowing access to the service, and then specify the route table to create a route table entry in.
 
@@ -143,6 +148,8 @@
 
 - `AWS Proton `allows you to deploy any serverless or container-based application with increased efficiency, consistency, and control. You can define infrastructure standards and effective continuous delivery pipelines for your organization. `Proton` breaks down the infrastructure into environment and service (“infrastructure as code” templates).
 - `Karpenter `is a flexible, high-performance Kubernetes cluster autoscaler that launches appropriately sized compute resources, like `Amazon EC2 instances`, in response to changing application load. It integrates with AWS to provision compute resources that precisely match workload requirements.
+- `Wavelength Zones` are AWS infrastructure deployments that embed AWS compute and storage services within telecommunications providers’ data centers at the edge of the 5G network, so application traffic can reach application servers running in `Wavelength Zones` without leaving the mobile providers’ network. This prevents the latency that would result from multiple hops to the internet and enables customers to take full advantage of 5G networks. `Wavelength Zones` extend AWS to the 5G edge, delivering a consistent developer experience across multiple 5G networks around the world. `Wavelength Zones` also allow developers to build the next generation of ultra-low latency applications using the same familiar AWS services, APIs, tools, and functionality they already use today.
+    - can deploy infra like kubernetes here
 
 ### Big Data 
 - `AWS Glue DataBrew` is essentially a no-code tool that streamlines the process of preparing data for analysis and machine learning. It’s especially valuable for data professionals looking to clean, normalize, and transform their data more efficiently. One of the standout features of DataBrew is its ability to cut down data preparation time by up to 80% compared to traditional manual methods. This efficiency boost not only accelerates the data preparation process but also allows data analysts and scientists to focus more on extracting insights rather than getting stuck in the initial stages of data processing.
