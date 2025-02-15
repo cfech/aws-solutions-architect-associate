@@ -2,6 +2,30 @@
 
 ## Takeaways from Practice Exams ##
 
+### DR
+- `Backup and Restore` - low priority, provision/restore after event, $
+- `Pilot Light` - data replicated, services are idle/off, resources activated after the event, $$
+- `Warm Standby` - Minimum resources always running, business critical workloads, scale up after, $$$
+- `Multi-site active/active ` - Zero downtime, nero zero data loss, mission critical workloads, $$$$
+
+### EC2 Placement Groups ###
+- A way to control how AWS deploys `EC2` and what `AZ` they are in
+![text](./images/ec2/cluster-pg.png)
+- `Cluster` - packs instances closely within the same `AZ`, as opposed to randomly
+    - achieves low-latency network performance
+    - good for tightly couple node to node communication for HPC applications 
+![text](./images/ec2/parition-pg.png)
+- `Partition` - spreads instances across logical partitions (sets of racks)
+    - redundancy, so machines in the same partition do not share the same hardware
+    - good for distributed workloads such as a HDFS, Cassandra and KAfka since they can utilize "partition awareness"
+![text](./images/ec2/spread-pg.png)
+- `Spread` - places a small group of instances across distinct underlying hardware
+    - Use case: You want to increase the availability of your application by spreading your instances across different hardware.
+    - Reduces Risk of correlated failures 
+    - for applications that require high availability
+![text](./images/ec2/placement-group-use-cases.png)
+
+
 ### Compute ###
 - `AWS Batch` automatically manages the underlying infrastructure, scales based on workload and simplifies batch job management.
 - `CloudFront Match Viewer` is an Origin Protocol Policy that configures `CloudFront` to communicate with your origin using HTTP or HTTPS, depending on the protocol of the viewer request
@@ -16,6 +40,7 @@
 - data transfer between `EC2` instances in the same `AZ` is **free**, while transferring data across `AZs` incurs additional charges. Keeping all instances in the same `AZ` minimizes data transfer costs while maintaining efficient processing.
 
 ![text](images/exam-prep/ec2-types.png)
+
 ![text](images/exam-prep/ec2-termination-flow.png)
 
 ### Data Migration 
